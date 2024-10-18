@@ -1,37 +1,36 @@
+// controller/uploadCtrl.js
+
 const fs = require("fs");
+const path = require("path");
 const asyncHandler = require("express-async-handler");
 
-const {
-  cloudinaryUploadImg,
-  cloudinaryDeleteImg,
-} = require("../utils/cloudinary");
 const uploadImages = asyncHandler(async (req, res) => {
   try {
-    const uploader = (path) => cloudinaryUploadImg(path, "images");
-    const urls = [];
     const files = req.files;
-    for (const file of files) {
-      const { path } = file;
-      const newpath = await uploader(path);
-      console.log(newpath);
-      urls.push(newpath);
-      fs.unlinkSync(path);
-    }
-    const images = urls.map((file) => {
-      return file;
+    const images = files.map((file) => {
+      return {
+        url: `${req.protocol}://${req.get("host")}/public/images/products/${file.filename}`,
+        filename: file.filename,
+      };
     });
     res.json(images);
   } catch (error) {
-    throw new Error(error);
+    res.status(500).json({ message: error.message });
   }
 });
+
 const deleteImages = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { filename } = req.params;
   try {
-    const deleted = cloudinaryDeleteImg(id, "images");
-    res.json({ message: "Deleted" });
+    const filePath = path.join(
+      __dirname,
+      "../public/images/products/",
+      filename
+    );
+    fs.unlinkSync(filePath);
+    res.json({ message: "Image Deleted" });
   } catch (error) {
-    throw new Error(error);
+    res.status(500).json({ message: error.message });
   }
 });
 
