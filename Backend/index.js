@@ -22,7 +22,7 @@ const couponRouter = require("./routes/couponRoute");
 const uploadRouter = require("./routes/uploadRoute");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
 dbConnect();
 app.use(morgan("dev"));

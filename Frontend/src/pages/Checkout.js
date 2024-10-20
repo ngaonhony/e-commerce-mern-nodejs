@@ -130,7 +130,7 @@ const Checkout = () => {
       return;
     }
     const result = await axios.post(
-      "http://localhost:5000/api/user/order/checkout",
+      "http://localhost:5050/api/user/order/checkout",
       { amount: totalAmount + 100 },
       config
     );
@@ -158,7 +158,7 @@ const Checkout = () => {
         };
 
         const result = await axios.post(
-          "http://localhost:5000/api/user/order/paymentVerification",
+          "http://localhost:5050/api/user/order/paymentVerification",
           data,
           config
         );
