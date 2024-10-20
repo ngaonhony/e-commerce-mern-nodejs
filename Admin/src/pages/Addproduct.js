@@ -137,10 +137,11 @@ const Addproduct = () => {
   const img = [];
   imgState?.forEach((i) => {
     img.push({
-      public_id: i.public_id,
+      filename: i.filename,
       url: i.url,
     });
   });
+  
 
   const imgshow = [];
   productImages?.forEach((i) => {
@@ -186,6 +187,15 @@ const Addproduct = () => {
     setColor(e);
     console.log(color);
   };
+
+  const handleFileUpload = (acceptedFiles) => {
+    const formData = new FormData();
+    acceptedFiles.forEach((file) => {
+      formData.append("images", file);
+    });
+    dispatch(uploadImg(formData));
+  };
+  
 
   return (
     <div>
@@ -314,7 +324,7 @@ const Addproduct = () => {
           </div>
           <div className="bg-white border-1 p-5 text-center">
             <Dropzone
-              onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
+              onDrop={handleFileUpload}
             >
               {({ getRootProps, getInputProps }) => (
                 <section>
@@ -334,7 +344,7 @@ const Addproduct = () => {
                 <div className=" position-relative" key={j}>
                   <button
                     type="button"
-                    onClick={() => dispatch(delImg(i.public_id))}
+                    onClick={() => dispatch(delImg(i.filename))}
                     className="btn-close position-absolute"
                     style={{ top: "10px", right: "10px" }}
                   ></button>

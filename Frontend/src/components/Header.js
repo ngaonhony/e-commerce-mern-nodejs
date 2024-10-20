@@ -27,9 +27,8 @@ const Header = () => {
 
   const config2 = {
     headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
+      Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
+        }`,
       Accept: "application/json",
     },
   };
@@ -62,23 +61,6 @@ const Header = () => {
   };
   return (
     <>
-      <header className="header-top-strip py-3">
-        <div className="container-xxl">
-          <div className="row">
-            <div className="col-6">
-              <p className="text-white mb-0">Free Shipping Over Rs.100</p>
-            </div>
-            <div className="col-6">
-              <p className="text-end text-white mb-0">
-                Hotline:
-                <a className="text-white" href="tel:+91 8264954234">
-                  +91 8264954234
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
       <header className="header-upper py-3">
         <div className="container-xxl">
           <div className="row align-items-center">

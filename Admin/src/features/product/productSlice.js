@@ -27,12 +27,16 @@ export const createProducts = createAsyncThunk(
   "product/create-products",
   async (productData, thunkAPI) => {
     try {
-      return await productService.createProduct(productData);
+      const response = await productService.createProduct(productData);
+      return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
   }
 );
+
 export const deleteAProduct = createAsyncThunk(
   "product/delete-product",
   async (id, thunkAPI) => {

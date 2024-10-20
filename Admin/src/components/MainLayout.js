@@ -7,7 +7,7 @@ import {
   AiOutlineBgColors,
   AiOutlineLogout,
 } from "react-icons/ai";
-
+import { useSelector } from 'react-redux';
 import { RiCouponLine } from "react-icons/ri";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,6 +22,7 @@ import { Layout, Menu, theme } from "antd";
 import { useNavigate } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 const MainLayout = () => {
+  const authState = useSelector((state) => state?.auth);
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -193,16 +194,11 @@ const MainLayout = () => {
                   alt=""
                 />
               </div>
-              <div
-                role="button"
-                id="dropdownMenuLink"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <h5 className="mb-0">Dev</h5>
-                <p className="mb-0">devjariwala8444@gmail.com</p>
-              </div>
-              <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <div>
+              <h5 className="mb-0">{authState?.user?.firstname || 'Admin'}</h5> 
+              <p className="mb-0">{authState?.user?.email || 'admin@example.com'}</p> 
+            </div>
+              {/* <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <li>
                   <Link
                     className="dropdown-item py-1 mb-1"
@@ -221,7 +217,7 @@ const MainLayout = () => {
                     Signout
                   </Link>
                 </li>
-              </div>
+              </div> */}
             </div>
           </div>
         </Header>

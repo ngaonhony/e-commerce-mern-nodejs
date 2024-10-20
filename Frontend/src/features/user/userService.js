@@ -2,9 +2,17 @@ import axios from "axios";
 import { base_url, config } from "../../utils/axiosConfig";
 
 const register = async (userData) => {
-  const response = await axios.post(`${base_url}user/register`, userData);
-  if (response.data) {
-    return response.data;
+  try {
+    const response = await axios.post(`${base_url}user/register`, userData);
+    if (response.data) {
+      
+      const { token } = response.data; 
+      localStorage.setItem('token', token); 
+      return response.data; 
+    }
+  } catch (error) {
+    console.error('Registration error:', error.response ? error.response.data : error.message);
+    throw new Error(error.response ? error.response.data.message : 'Registration failed'); // Ném lỗi lên
   }
 };
 
