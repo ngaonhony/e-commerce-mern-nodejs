@@ -256,7 +256,7 @@ const Home = () => {
                         <ReactStars
                           count={5}
                           size={24}
-                          value={item?.totalrating.toString()}
+                          value={Number(item?.totalrating)} // Ensure it's a number
                           edit={false}
                           activeColor="#ffd700"
                         />
@@ -387,6 +387,7 @@ const Home = () => {
           {productState &&
             productState?.map((item, index) => {
               if (item.tags === "popular") {
+                console.log(item?.images[0]?.url);
                 return (
                   <div key={index} className={"col-3"}>
                     <div className="product-card position-relative">
@@ -427,7 +428,7 @@ const Home = () => {
                         <ReactStars
                           count={5}
                           size={24}
-                          value={item?.totalrating.toString()}
+                          value={Number(item?.totalrating)} // Ensure it's a number
                           edit={false}
                           activeColor="#ffd700"
                         />

@@ -89,24 +89,25 @@ const Cart = () => {
                   >
                     <div className="cart-col-1 gap-15 d-flex align-items-center">
                       <div className="w-25">
-                        <img
-                          src={item?.productId.images[0].url}
-                          className="img-fluid"
-                          alt="product image"
-                        />
+                      <img
+                        src={item?.productId?.images?.[0]?.url || "images/laptop.jpg"}
+                        className="img-fluid"
+                        alt="product image"
+                      />
                       </div>
                       <div className="w-75">
-                        <p>{item?.productId.title}</p>
+                        <p>{item?.productId?.title || 'No title available'}</p>
 
                         <p className="d-flex gap-3">
                           Color:
                           <ul className="colors ps-0">
                             <li
-                              style={{ backgroundColor: item?.color.title }}
+                              style={{ backgroundColor: item?.color?.title || 'transparent' }}
                             ></li>
                           </ul>
                         </p>
                       </div>
+
                     </div>
                     <div className="cart-col-2">
                       <h5 className="price">Rs. {item?.price}</h5>

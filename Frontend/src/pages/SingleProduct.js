@@ -8,7 +8,7 @@ import Color from "../components/Color";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import watch from "../images/watch.jpg";
+import laptop from "../images/laptop.jpg";
 import Container from "../components/Container";
 import { addToWishlist } from "../features/products/productSlilce";
 import { useDispatch, useSelector } from "react-redux";
@@ -65,14 +65,14 @@ const SingleProduct = () => {
       );
     }
   };
+  console.log(productState);
   const props = {
     width: 594,
     height: 600,
     zoomWidth: 600,
 
-    img: productState?.images[0].url
-      ? productState?.images[0].url
-      : "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg",
+    img: productState?.images?.[0]?.url || "images/laptop.jpg",
+    
   };
 
   const [orderedProduct, setorderedProduct] = useState(true);
@@ -143,7 +143,7 @@ const SingleProduct = () => {
             <div className="other-product-images d-flex flex-wrap gap-15">
               {productState?.images.map((item, index) => {
                 return (
-                  <div>
+                  <div key={index}>
                     <img src={item?.url} className="img-fluid" alt="" />
                   </div>
                 );
@@ -161,8 +161,7 @@ const SingleProduct = () => {
                   <ReactStars
                     count={5}
                     size={24}
-                    value={productState?.totalrating.toString()}
-                    edit={false}
+                    value={Number(productState?.totalrating) || 0}                     edit={false}
                     activeColor="#ffd700"
                   />
                   <p className="mb-0 t-review">
@@ -327,8 +326,7 @@ const SingleProduct = () => {
                     <ReactStars
                       count={5}
                       size={24}
-                      value={productState?.totalrating?.toString()}
-                      edit={false}
+                      value={Number(productState?.totalrating) || 0}                       edit={false}
                       activeColor="#ffd700"
                     />
                     <p className="mb-0">
