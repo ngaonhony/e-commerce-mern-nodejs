@@ -16,9 +16,9 @@ import view from "../images/view.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBlogs } from "../features/blogs/blogSlice";
 import moment from "moment";
-import { getAllProducts } from "../features/products/productSlilce";
+import { getAllProducts } from "../features/products/productSlice";
 import ReactStars from "react-rating-stars-component";
-import { addToWishlist } from "../features/products/productSlilce";
+import { addToWishlist } from "../features/products/productSlice";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 const Home = () => {

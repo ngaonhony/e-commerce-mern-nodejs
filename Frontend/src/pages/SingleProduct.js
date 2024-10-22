@@ -10,13 +10,13 @@ import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import watch from "../images/watch.jpg";
 import Container from "../components/Container";
-import { addToWishlist } from "../features/products/productSlilce";
+import { addToWishlist } from "../features/products/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addRating,
   getAProduct,
   getAllProducts,
-} from "../features/products/productSlilce";
+} from "../features/products/productSlice";
 import { toast } from "react-toastify";
 import { addProdToCart, getUserCart } from "../features/user/userSlice";
 

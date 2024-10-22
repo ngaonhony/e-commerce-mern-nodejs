@@ -3,7 +3,7 @@ import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWishlist } from "../features/products/productSlilce";
+import { addToWishlist } from "../features/products/productSlice";
 import { getuserProductWishlist } from "../features/user/userSlice";
 const Wishlist = () => {
   const dispatch = useDispatch();

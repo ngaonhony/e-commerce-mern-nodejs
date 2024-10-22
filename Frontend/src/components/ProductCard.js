@@ -9,7 +9,7 @@ import wish from "../images/wish.svg";
 // import addcart from "../images/add-cart.svg";
 import view from "../images/view.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWishlist } from "../features/products/productSlilce";
+import { addToWishlist } from "../features/products/productSlice";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useState } from "react";
 

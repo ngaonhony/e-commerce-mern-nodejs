@@ -6,7 +6,7 @@ import ProductCard from "../components/ProductCard";
 import Color from "../components/Color";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProducts } from "../features/products/productSlilce";
+import { getAllProducts } from "../features/products/productSlice";
 import { Link } from "react-router-dom";
 
 const OurStore = () => {
