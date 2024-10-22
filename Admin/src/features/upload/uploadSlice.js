@@ -9,30 +9,22 @@ export const uploadImg = createAsyncThunk(
       for (let i = 0; i < data.length; i++) {
         formData.append("images", data[i]);
       }
-      const response = await uploadService.uploadImg(formData);
-      return response;
+      return await uploadService.uploadImg(formData);
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
-      );
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
-
 export const delImg = createAsyncThunk(
   "delete/images",
   async (id, thunkAPI) => {
     try {
-      const response = await uploadService.deleteImg(id);
-      return response;
+      return await uploadService.deleteImg(id);
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
-      );
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
-
 const initialState = {
   images: [],
   isError: false,

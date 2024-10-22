@@ -181,11 +181,9 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error.message;
-        if (action.error.response) {
-          toast.error(action.error.response.data.message || "Something went wrong!");
-        } else {
-          toast.error("Login Failed: " + action.error.message); // Thông điệp mặc định
+        state.message = action.error;
+        if (state.isError === true) {
+          toast.error(action.payload.response.data.message);
         }
       })
       .addCase(loginUser.pending, (state) => {
@@ -206,12 +204,10 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error.message;
-      if (action.error.response) {
-        toast.error(action.error.response.data.message || "Something went wrong!");
-      } else {
-        toast.error("Login Failed: " + action.error.message);
-      }
+        state.message = action.error;
+        if (state.isError === true) {
+          toast.error(action.payload.response.data.message);
+        }
       })
       .addCase(getuserProductWishlist.pending, (state) => {
         state.isLoading = true;

@@ -233,7 +233,7 @@ const Home = () => {
                       <div className="product-image">
                         <img
                           src={item?.images[0]?.url}
-                          className="img-fluid d"
+                          //className="img-fluid d"
                           alt="product image"
                           height={"250px"}
                           width={"260px"}
@@ -241,7 +241,7 @@ const Home = () => {
                         />
                         <img
                           src={item?.images[0]?.url}
-                          className="img-fluid d"
+                          //className="img-fluid d"
                           alt="product image"
                           height={"250px"}
                           width={"260px"}

@@ -1,18 +1,15 @@
-// controller/blogCtrl.js
-
 const Blog = require("../models/blogModel");
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 const validateMongoDbId = require("../utils/validateMongodbId");
+const cloudinaryUploadImg = require("../utils/cloudinary");
 const fs = require("fs");
-const path = require("path");
-
 const createBlog = asyncHandler(async (req, res) => {
   try {
     const newBlog = await Blog.create(req.body);
     res.json(newBlog);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new Error(error);
   }
 });
 
@@ -20,12 +17,12 @@ const updateBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
+    const updateBlog = await Blog.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-    res.json(updatedBlog);
+    res.json(updateBlog);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new Error(error);
   }
 });
 
@@ -33,26 +30,27 @@ const getBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const blog = await Blog.findById(id)
+    const getBlog = await Blog.findById(id)
       .populate("likes")
       .populate("dislikes");
-    await Blog.findByIdAndUpdate(
+    const updateViews = await Blog.findByIdAndUpdate(
       id,
-      { $inc: { numViews: 1 } },
+      {
+        $inc: { numViews: 1 },
+      },
       { new: true }
     );
-    res.json(blog);
+    res.json(getBlog);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new Error(error);
   }
 });
-
 const getAllBlogs = asyncHandler(async (req, res) => {
   try {
-    const blogs = await Blog.find();
-    res.json(blogs);
+    const getBlogs = await Blog.find();
+    res.json(getBlogs);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new Error(error);
   }
 });
 
@@ -63,10 +61,9 @@ const deleteBlog = asyncHandler(async (req, res) => {
     const deletedBlog = await Blog.findByIdAndDelete(id);
     res.json(deletedBlog);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new Error(error);
   }
 });
-
 
 const liketheBlog = asyncHandler(async (req, res) => {
   const { blogId } = req.body;
@@ -165,30 +162,32 @@ const uploadImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
+    const uploader = (path) => cloudinaryUploadImg(path, "images");
+    const urls = [];
     const files = req.files;
-    const imageUrls = files.map((file) => {
-      return {
-        url: `${req.protocol}://${req.get("host")}/public/images/blogs/${file.filename}`,
-        filename: file.filename,
-      };
-    });
-
-    const updatedBlog = await Blog.findByIdAndUpdate(
+    for (const file of files) {
+      const { path } = file;
+      const newpath = await uploader(path);
+      console.log(newpath);
+      urls.push(newpath);
+      fs.unlinkSync(path);
+    }
+    const findBlog = await Blog.findByIdAndUpdate(
       id,
       {
-        images: imageUrls,
+        images: urls.map((file) => {
+          return file;
+        }),
       },
       {
         new: true,
       }
     );
-    res.json(updatedBlog);
+    res.json(findBlog);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new Error(error);
   }
 });
-
-
 
 module.exports = {
   createBlog,

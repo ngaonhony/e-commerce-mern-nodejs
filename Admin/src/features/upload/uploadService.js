@@ -1,26 +1,34 @@
 import axios from "axios";
+import { config } from "../../utils/axiosconfig";
 import { base_url } from "../../utils/baseUrl";
 
 const uploadImg = async (data) => {
-  const response = await axios.post(`${base_url}upload/`, data, {
+  // Ensure you're sending FormData
+  const formData = new FormData();
+  data.forEach((file) => {
+    formData.append("images", file);
+  });
+
+  const response = await axios.post(`${base_url}upload/`, formData, {
     headers: {
-      // Do not set 'Content-Type'; let axios handle it
-      // Include authorization headers if needed
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem("userToken")}`,
     },
   });
   return response.data;
 };
 
-const deleteImg = async (filename) => {
-  const response = await axios.delete(`${base_url}upload/delete-img/${filename}`, {
-    headers: {
-      // Include authorization headers if needed
-    },
-  });
+const deleteImg = async (id) => {
+  const response = await axios.delete(
+    `${base_url}upload/delete-img/${id}`,
+    config
+  );
   return response.data;
 };
 
-export default {
+const uploadService = {
   uploadImg,
   deleteImg,
 };
+
+export default uploadService;
