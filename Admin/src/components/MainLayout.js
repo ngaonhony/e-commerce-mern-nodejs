@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import {
   AiOutlineDashboard,
@@ -7,6 +7,7 @@ import {
   AiOutlineBgColors,
   AiOutlineLogout,
 } from "react-icons/ai";
+import axios from "axios";
 
 import { RiCouponLine } from "react-icons/ri";
 import { ToastContainer } from "react-toastify";
@@ -29,16 +30,22 @@ const MainLayout = () => {
   const navigate = useNavigate();
   return (
     <Layout /* onContextMenu={(e) => e.preventDefault()} */>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        style={{ backgroundColor: "#ffffff" }}
+      >
         <div className="logo">
           <h2 className="text-white fs-5 text-center py-3 mb-0">
-            <span className="sm-logo">CC</span>
-            <span className="lg-logo">Cart Corner</span>
+            <span className="sm-logo">NHOM 1</span>
+            <span className="lg-logo">TMDT Nhom 1</span>
           </h2>
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           mode="inline"
+          style={{ backgroundColor: "light" }}
           defaultSelectedKeys={[""]}
           onClick={({ key }) => {
             if (key === "signout") {
