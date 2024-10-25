@@ -87,7 +87,7 @@ const Addblogcat = () => {
             {formik.touched.title && formik.errors.title}
           </div>
           <button
-            className="btn btn-success border-0 rounded-3 my-5"
+            className="btn btn-black border-0 rounded-3 my-5"
             type="submit"
           >
             {getBlogCatId !== undefined ? "Edit" : "Add"} Blog Category

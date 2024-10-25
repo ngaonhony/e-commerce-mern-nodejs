@@ -42,3 +42,8 @@
   font-family: Roboto !important;
   color: var(--color-828599);
 }
+
+.btn-black {
+  background-color: black;
+  color: white;
+}
