@@ -4,12 +4,12 @@ import Footer from "./Footer";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Nav from "./Nav";
+import Header from "./Header";
 
 const Layout = () => {
   return (
     <>
-      <Nav/>
+      <Header/>
       <Outlet />
       <Footer />
       <ToastContainer
