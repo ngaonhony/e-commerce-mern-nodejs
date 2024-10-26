@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import BlogCard from "../components/BlogCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
-import { services } from "../utils/Data";
 import wish from "../images/wish.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBlogs } from "../features/blogs/blogSlice";
@@ -12,9 +11,9 @@ import { getAllProducts } from "../features/products/productSlice";
 import ReactStars from "react-rating-stars-component";
 import { addToWishlist } from "../features/products/productSlice";
 import Banner1 from "../banners/Banner1";
-import Banner2 from "../banners/Banner2";
+import ProductGrid from "../components/ProductGrid";
 
-const Home = () => {
+const Home = () => {  
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state?.product?.product);
 
@@ -40,111 +39,8 @@ const Home = () => {
     <>
 
       <Banner1/>
-
-      <Banner2/>
       
-      <Container class1="home-wrapper-2 py-5">
-        <div className="row">
-          <div className="col-12">
-            <div className="servies d-flex align-items-center justify-content-between">
-              {services?.map((i, j) => {
-                return (
-                  <div className="d-flex align-items-center gap-15" key={j}>
-                    <img src={i.image} alt="services" />
-                    <div>
-                      <h6>{i.title}</h6>
-                      <p className="mb-0">{i.tagline}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      
-      </Container>
-
-      <Container class1="featured-wrapper py-5 home-wrapper-2">
-        <div className="row">
-          <div className="col-12">
-            <h3 className="section-heading">Featured Collection</h3>
-          </div>
-          {productState &&
-            productState?.map((item, index) => {
-              if (item.tags === "featured") {
-                return (
-                  <div key={index} className={"col-3"}>
-                    <div className="product-card position-relative">
-                      <div className="wishlist-icon position-absolute">
-                        <button className="border-0 bg-transparent">
-                          <img
-                            src={wish}
-                            alt="wishlist"
-                            onClick={(e) => {
-                              addToWish(item?._id);
-                            }}
-                          />
-                        </button>
-                      </div>
-                      <div className="product-image">
-                        <img
-                          src={item?.images[0]?.url}
-                          //className="img-fluid d"
-                          alt="product image"
-                          height={"250px"}
-                          width={"260px"}
-                          onClick={() => navigate("/product/" + item?._id)}
-                        />
-                        <img
-                          src={item?.images[0]?.url}
-                          //className="img-fluid d"
-                          alt="product image"
-                          height={"250px"}
-                          width={"260px"}
-                          onClick={() => navigate("/product/" + item?._id)}
-                        />
-                      </div>
-                      <div className="product-details">
-                        <h6 className="brand">{item?.brand}</h6>
-                        <h5 className="product-title">
-                          {item?.title?.substr(0, 70) + "..."}
-                        </h5>
-                        <ReactStars
-                          count={5}
-                          size={24}
-                          value={item?.totalrating.toString()}
-                          edit={false}
-                          activeColor="#ffd700"
-                        />
-
-                        <p className="price">Rs. {item?.price}</p>
-                      </div>
-                      <div className="action-bar position-absolute">
-                        <div className="d-flex flex-column gap-15">
-                          {/* <button className="border-0 bg-transparent">
-                            <img src={prodcompare} alt="compare" />
-                          </button>
-                          <button className="border-0 bg-transparent">
-                            <img
-                              onClick={() => navigate("/product/" + item?._id)}
-                              src={view}
-                              alt="view"
-                            />
-                          </button> */}
-                          {/* <button className="border-0 bg-transparent">
-                            <img src={addcart} alt="addcart" />
-                          </button> */}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-            })}
-        </div>
-      </Container>
-
-
+      <ProductGrid tag="featured" title="Featured Collection" />
 
       <Container class1="special-wrapper py-5 home-wrapper-2">
         <div className="row">
@@ -174,6 +70,7 @@ const Home = () => {
             })}
         </div>
       </Container>
+
       <Container class1="popular-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
