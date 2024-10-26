@@ -1,4 +1,3 @@
-// src/components/Index.jsx
 import React, { useEffect, useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import SearchIcon from "../assets/icons/SearchIcon";
@@ -15,12 +14,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { getAProduct } from "../features/products/productSlice";
 import { getUserCart } from "../features/user/userSlice";
+import "react-bootstrap-typeahead/css/Typeahead.css";
 
 export default function Nav() {
   const [searchInput, setSearchInput] = useState(true);
   const [mdOptionsToggle, setMdOptionsToggle] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // State for logout confirmation
+  const [totalItems, setTotalItems] = useState(0);
 
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state?.auth?.cartProducts);
@@ -36,23 +36,28 @@ export default function Nav() {
 
   const config2 = {
     headers: {
-      Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-        }`,
+      Authorization: `Bearer ${
+        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
+      }`,
       Accept: "application/json",
     },
   };
 
+  // Fixed useEffect: Removed config2 from dependency array
   useEffect(() => {
     dispatch(getUserCart(config2));
-  }, [dispatch, config2]);
+  }, [dispatch]);
 
   const [productOpt, setProductOpt] = useState([]);
   useEffect(() => {
     let sum = 0;
+    let items = 0; // Variable to hold total items
     for (let index = 0; index < cartState?.length; index++) {
-      sum = sum + Number(cartState[index].quantity) * cartState[index].price;
+      sum += Number(cartState[index].quantity) * cartState[index].price;
+      items += Number(cartState[index].quantity); // Sum up quantities
     }
     setTotal(sum);
+    setTotalItems(items); // Update totalItems state
   }, [cartState]);
 
   useEffect(() => {
@@ -65,12 +70,8 @@ export default function Nav() {
   }, [productState]);
 
   const handleLogout = () => {
-    // Clear user data from localStorage
     localStorage.removeItem("customer");
-    // Redirect to login page
     navigate("/login");
-    // Optionally, you can dispatch a logout action to Redux store
-    // dispatch(logout());
   };
 
   const handleLinkClick = () => {
@@ -84,8 +85,9 @@ export default function Nav() {
           {/* For md screen size */}
           <div
             id="md-searchbar"
-            className={`${mdOptionsToggle ? "hidden" : "flex"
-              } bg-white dark:bg-gray-900 lg:hidden py-5 px-6 items-center justify-between`}
+            className={`${
+              mdOptionsToggle ? "hidden" : "flex"
+            } bg-white dark:bg-gray-900 lg:hidden py-5 px-6 items-center justify-between`}
           >
             <div className="flex items-center space-x-3 text-gray-800 dark:text-white">
               <div className="input-group relative flex flex-wrap items-stretch w-full mb-4">
@@ -120,8 +122,17 @@ export default function Nav() {
               <Link to={authState?.user === null ? "/login" : "/my-profile"}>
                 <UserIcon width={24} height={24} />
               </Link>
-              <Link to="/cart">
-                <CartIcon width={20} height={20} />
+              <Link to="/cart" className="relative">
+                <CartBottomIcon
+                  className="fill-stroke"
+                  width={24}
+                  height={24}
+                />
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
               </Link>
             </div>
           </div>
@@ -134,11 +145,7 @@ export default function Nav() {
                 aria-label="the Crib."
               >
                 <Link to="/">
-                  <Logo
-                    className="fill-stroke"
-                    width={93}
-                    height={19}
-                  />
+                  <Logo className="fill-stroke" width={93} height={19} />
                 </Link>
               </h1>
               <ul className="hidden w-8/12 md:flex items-center justify-center space-x-8">
@@ -186,9 +193,7 @@ export default function Nav() {
               <div className="md:w-2/6 justify-end flex items-center space-x-4 xl:space-x-8">
                 <div className="hidden lg:flex items-center">
                   <button
-                    onClick={() =>
-                      setSearchInput(!searchInput)
-                    }
+                    onClick={() => setSearchInput(!searchInput)}
                     aria-label="search items"
                     className="text-gray-800 dark:hover:text-gray-300 dark:text-white focus:outline-none"
                   >
@@ -212,10 +217,10 @@ export default function Nav() {
                     paginate={paginate}
                     labelKey={"name"}
                     placeholder="Search for Products here"
-                    className={` ${searchInput ? "hidden" : ""
-                      } text-sm dark:bg-gray-900 dark:placeholder-gray-300 text-gray-600 rounded ml-1 focus:outline-none px-1`}
+                    className={`${
+                      searchInput ? "hidden" : ""
+                    } text-sm dark:bg-gray-900 dark:placeholder-gray-300 text-gray-600 rounded ml-1 focus:outline-none px-1`}
                   />
-
                 </div>
                 <div className="hidden lg:flex items-center space-x-4 xl:space-x-8">
                   <Link to="/wishlist">
@@ -225,27 +230,32 @@ export default function Nav() {
                       height={28}
                     />
                   </Link>
-                  <Link to={authState?.user === null ? "/login" : "/my-profile"}>
+                  <Link
+                    to={authState?.user === null ? "/login" : "/my-profile"}
+                  >
                     <UserIcon
                       className="fill-stroke"
                       width={24}
                       height={24}
                     />
                   </Link>
-                  <Link to="/cart">
+                  <Link to="/cart" className="relative">
                     <CartBottomIcon
                       className="fill-stroke"
                       width={24}
                       height={24}
                     />
+                    {totalItems > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                        {totalItems}
+                      </span>
+                    )}
                   </Link>
                 </div>
                 <div className="flex lg:hidden">
                   <button
                     aria-label="show options"
-                    onClick={() =>
-                      setMdOptionsToggle(!mdOptionsToggle)
-                    }
+                    onClick={() => setMdOptionsToggle(!mdOptionsToggle)}
                     className="text-black dark:text-white dark:hover:text-gray-300 hidden md:flex focus:outline-none rounded"
                   >
                     <MenuIcon
@@ -271,8 +281,9 @@ export default function Nav() {
             {/* For small screen */}
             <div
               id="mobile-menu"
-              className={`${showMenu ? "flex" : "hidden"
-                } absolute dark:bg-gray-900 z-10 inset-0 md:hidden bg-white flex-col h-screen w-full`}
+              className={`${
+                showMenu ? "flex" : "hidden"
+              } absolute dark:bg-gray-900 z-10 inset-0 md:hidden bg-white flex-col h-screen w-full`}
             >
               <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 p-4">
                 <div className="flex items-center space-x-3">
@@ -282,8 +293,10 @@ export default function Nav() {
                         id="pagination-example"
                         onPaginate={() => console.log("Results paginated")}
                         onChange={(selected) => {
-                          navigate(`/product/${selected[0]?.prod}`);
-                          dispatch(getAProduct(selected[0]?.prod));
+                          if (selected.length > 0) {
+                            navigate(`/product/${selected[0]?.prod}`);
+                            dispatch(getAProduct(selected[0]?.prod));
+                          }
                         }}
                         options={productOpt}
                         paginate={paginate}
@@ -386,15 +399,13 @@ export default function Nav() {
                   </li>
                 </ul>
               </div>
-              {/* Nút Logout ở cuối menu small screen */}
-              {/* Bạn có thể thêm nó ở đây nếu muốn */}
               <div className="h-full flex items-end">
                 <ul className="flex flex-col space-y-8 bg-gray-50 w-full py-10 p-4 dark:bg-gray-800">
                   <li>
                     <Link
                       onClick={handleLinkClick}
                       to="/cart"
-                      className="dark:text-white text-gray-800 flex items-center space-x-2 hover:underline focus:outline-none"
+                      className="dark:text-white text-gray-800 flex items-center space-x-2 hover:underline focus:outline-none relative"
                     >
                       <CartBottomIcon
                         className="fill-stroke"
@@ -402,6 +413,11 @@ export default function Nav() {
                         height={22}
                       />
                       <p className="text-base">Cart</p>
+                      {totalItems > 0 && (
+                        <span className="absolute -top-1 -right-3 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+                          {totalItems}
+                        </span>
+                      )}
                     </Link>
                   </li>
                   <li>
@@ -413,7 +429,8 @@ export default function Nav() {
                       <UserIcon
                         className="fill-stroke"
                         width={24}
-                        height={24} />
+                        height={24}
+                      />
                       <p className="text-base">Account</p>
                     </Link>
                   </li>
@@ -431,12 +448,27 @@ export default function Nav() {
                       <p className="text-base">Wishlist</p>
                     </Link>
                   </li>
+                  {/* Logout button */}
+                  {authState?.user !== null && (
+                    <li>
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          handleLinkClick();
+                        }}
+                        className="dark:text-white text-gray-800 flex items-center space-x-2 hover:underline focus:outline-none w-full text-left"
+                      >
+                        <p className="text-base">Logout</p>
+                      </button>
+                    </li>
+                  )}
                 </ul>
               </div>
             </div>
           </div>
+          {/* For large screens */}
         </div>
       </div>
-    </div> // Fixed closing tag for return
-  ); // Added missing closing parenthesis
+    </div>
+  );
 }
