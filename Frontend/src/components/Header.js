@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
-import compare from "../images/compare.svg";
 import wishlist from "../images/wishlist.svg";
 import user from "../images/user.svg";
 import cart from "../images/cart.svg";
@@ -27,9 +26,8 @@ const Header = () => {
 
   const config2 = {
     headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
+      Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
+        }`,
       Accept: "application/json",
     },
   };
@@ -60,25 +58,9 @@ const Header = () => {
     localStorage.clear();
     window.location.reload();
   };
+  
   return (
     <>
-      <header className="header-top-strip py-3">
-        <div className="container-xxl">
-          <div className="row">
-            <div className="col-6">
-              <p className="text-white mb-0">Free Shipping Over Rs.100</p>
-            </div>
-            <div className="col-6">
-              <p className="text-end text-white mb-0">
-                Hotline:
-                <a className="text-white" href="tel:+91 8264954234">
-                  +91 8264954234
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
       <header className="header-upper py-3">
         <div className="container-xxl">
           <div className="row align-items-center">
@@ -111,15 +93,6 @@ const Header = () => {
             <div className="col-5">
               <div className="header-upper-links d-flex align-items-center justify-content-between">
                 <div>
-                  {/* <Link
-                    to="/compare-product"
-                    className="d-flex align-items-center gap-10 text-white"
-                  >
-                    <img src={compare} alt="compare" />
-                    <p className="mb-0">
-                      Compare <br /> Products
-                    </p>
-                  </Link> */}
                 </div>
                 <div>
                   <Link
