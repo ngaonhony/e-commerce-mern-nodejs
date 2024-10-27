@@ -25,26 +25,17 @@ const ProductCard = ({ grid, data }) => {
             : grid === 4
             ? "lg:grid-cols-3"
             : "lg:grid-cols-4"
-        } sm:grid-cols-2 grid-cols-1 gap-6 p-8`}
+        } sm:grid-cols-2 grid-cols-1 gap-6`}
       >
         {data?.map((item, index) => (
-          <div key={index} className="relative group p-4">
-            {/* Wishlist Icon */}
-            <div className="absolute top-2 right-2">
-              <button
-                className="border-0 bg-transparent"
-                onClick={() => addToWish(item?._id)}
-              >
-                <img src={wish} alt="wishlist" />
-              </button>
-            </div>
+          <div key={index} className="relative group">
             {/* Product Image */}
             <div
-              className="relative group overflow-hidden h-[300px] w-full cursor-pointer"
+              className="relative group overflow-hidden"
               onClick={() => navigate("/product/" + item?._id)}
             >
               <img
-                className="w-full h-full object-cover"
+                style={{ cursor: "pointer", height: "400px", width: "400px" }}
                 src={item?.images[0]?.url}
                 alt={item?.title}
               />
