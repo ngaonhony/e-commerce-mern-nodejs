@@ -8,7 +8,7 @@ import {
   AiOutlineLogout,
 } from "react-icons/ai";
 import axios from "axios";
-
+import { useSelector } from 'react-redux';
 import { RiCouponLine } from "react-icons/ri";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,10 +24,14 @@ import { useNavigate } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const authState = useSelector((state) => state?.auth);
+  
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  
   const navigate = useNavigate();
+  
   return (
     <Layout /* onContextMenu={(e) => e.preventDefault()} */>
       <Sider
@@ -206,8 +210,8 @@ const MainLayout = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <h5 className="mb-0">Dev</h5>
-                <p className="mb-0">devjariwala8444@gmail.com</p>
+                <h5 className="mb-0">{authState?.user?.firstname || 'Admin'}</h5> 
+                <p className="mb-0">{authState?.user?.email || 'admin@example.com'}</p> 
               </div>
               <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <li>
