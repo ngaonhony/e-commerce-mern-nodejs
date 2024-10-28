@@ -54,6 +54,7 @@ const Addblogcat = () => {
     },
     validationSchema: schema,
     onSubmit: (values) => {
+      console.log("Form Values:", values); // Kiểm tra giá trị khi submit
       const data = { id: getBlogCatId, blogCatData: values };
       if (getBlogCatId !== undefined) {
         dispatch(updateABlogCat(data));

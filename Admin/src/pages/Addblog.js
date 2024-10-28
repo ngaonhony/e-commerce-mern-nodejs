@@ -1,4 +1,4 @@
-import { React, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CustomInput from "../components/CustomInput";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -17,19 +17,26 @@ import {
 } from "../features/blogs/blogSlice";
 import { getCategories } from "../features/bcategory/bcategorySlice";
 
+// Định nghĩa schema cho việc xác thực form
 let schema = yup.object().shape({
   title: yup.string().required("Title is Required"),
   description: yup.string().required("Description is Required"),
   category: yup.string().required("Category is Required"),
+  images: yup
+    .array()
+    .min(1, "At least one image is required")
+    .required("Images are required"),
 });
-const Addblog = () => {
+
+const AddBlog = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const getBlogId = location.pathname.split("/")[3];
-  const imgState = useSelector((state) => state?.upload?.images);
-  const bCatState = useSelector((state) => state.bCategory.bCategories);
-  const blogState = useSelector((state) => state.blogs);
+  const getBlogId = location.pathname.split("/")[3]; // Lấy ID của blog từ đường dẫn
+  const imgState = useSelector((state) => state?.upload?.images); // Trạng thái ảnh đã upload
+  const bCatState = useSelector((state) => state.bCategory.bCategories); // Danh sách category
+  const blogState = useSelector((state) => state.blogs); // Trạng thái blog
+  const [isUploading, setIsUploading] = useState(false); // Trạng thái upload ảnh
 
   const {
     isSuccess,
@@ -42,45 +49,36 @@ const Addblog = () => {
     blogImages,
     updatedBlog,
   } = blogState;
-  //console.log(blogImages?.[0].url);
+
+  // Lấy blog khi ID đã được cung cấp
   useEffect(() => {
     if (getBlogId !== undefined) {
       dispatch(getABlog(getBlogId));
-      img.push(blogImages);
     } else {
       dispatch(resetState());
     }
   }, [getBlogId]);
 
+  // Lấy danh sách category
   useEffect(() => {
-    dispatch(resetState());
     dispatch(getCategories());
+    return () => dispatch(resetState()); // Đảm bảo reset khi unmount
   }, []);
 
+  // Hiển thị thông báo khi tạo hoặc cập nhật blog thành công
   useEffect(() => {
     if (isSuccess && createdBlog) {
-      toast.success("Blog Added Successfullly!");
+      toast.success("Blog Added Successfully!");
+      dispatch(resetState()); // Reset trạng thái sau khi thành công
     }
     if (isSuccess && updatedBlog) {
-      toast.success("Blog Updated Successfullly!");
-      navigate("/admin/blog-list");
+      toast.success("Blog Updated Successfully!");
+      navigate("/admin/blog-list"); // Chuyển hướng về danh sách blog
     }
     if (isError) {
       toast.error("Something Went Wrong!");
     }
-  }, [isSuccess, isError, isLoading]);
-
-  const img = [];
-  blogImages?.forEach((i) => {
-    img.push({
-      public_id: i.public_id,
-      url: i.url,
-    });
-  });
-  console.log(img);
-  useEffect(() => {
-    formik.values.images = img;
-  }, [img]);
+  }, [isSuccess, isError, isLoading, createdBlog, updatedBlog]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -88,23 +86,42 @@ const Addblog = () => {
       title: blogName || "",
       description: blogDesc || "",
       category: blogCategory || "",
-      images: img || "",
+      images: blogImages || [],
     },
     validationSchema: schema,
     onSubmit: (values) => {
       if (getBlogId !== undefined) {
         const data = { id: getBlogId, blogData: values };
         dispatch(updateABlog(data));
-        dispatch(resetState());
       } else {
         dispatch(createBlogs(values));
-        formik.resetForm();
+        formik.resetForm(); // Reset form sau khi tạo mới
         setTimeout(() => {
           dispatch(resetState());
-        }, 300);
+        }, 3000);
       }
     },
   });
+
+  // Cập nhật giá trị images trong formik khi ảnh đã được upload
+  useEffect(() => {
+    if (imgState && imgState.length > 0) {
+      const imagesArray = imgState.map((img) => ({
+        public_id: img.public_id,
+        url: img.url,
+      }));
+      formik.setFieldValue("images", imagesArray);
+    }
+  }, [imgState]);
+
+  const handleImageUpload = (acceptedFiles) => {
+    setIsUploading(true);
+    dispatch(uploadImg(acceptedFiles)).then(() => {
+      setIsUploading(false);
+    });
+  };
+
+  const imgShow = formik.values.images;
 
   return (
     <div>
@@ -112,41 +129,42 @@ const Addblog = () => {
         {getBlogId !== undefined ? "Edit" : "Add"} Blog
       </h3>
 
-      <div className="">
-        <form action="" onSubmit={formik.handleSubmit}>
+      <div>
+        <form onSubmit={formik.handleSubmit}>
           <div className="mt-4">
             <CustomInput
               type="text"
               label="Enter Blog Title"
               name="title"
-              onChange={formik.handleChange("title")}
-              onBlr={formik.handleBlur("title")}
+              i_id="blogTitle"
+              i_class=""
               val={formik.values.title}
+              onChng={formik.handleChange("title")}
+              onBlr={formik.handleBlur("title")}
             />
           </div>
           <div className="error">
             {formik.touched.title && formik.errors.title}
           </div>
+
           <select
             name="category"
             onChange={formik.handleChange("category")}
             onBlur={formik.handleBlur("category")}
             value={formik.values.category}
-            className="form-control py-3  mt-3"
-            id=""
+            className="form-control py-3 mt-3"
           >
             <option value="">Select Blog Category</option>
-            {bCatState.map((i, j) => {
-              return (
-                <option key={j} value={i.title}>
-                  {i.title}
-                </option>
-              );
-            })}
+            {bCatState.map((i, j) => (
+              <option key={j} value={i.title}>
+                {i.title}
+              </option>
+            ))}
           </select>
           <div className="error">
             {formik.touched.category && formik.errors.category}
           </div>
+
           <ReactQuill
             theme="snow"
             className="mt-3"
@@ -157,13 +175,12 @@ const Addblog = () => {
           <div className="error">
             {formik.touched.description && formik.errors.description}
           </div>
-          <div className="bg-white border-1 p-5 text-center mt-3">
-            <Dropzone
-              onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
-            >
+
+          <div className="bg-white border-1 p-5 text-center">
+            <Dropzone onDrop={handleImageUpload}>
               {({ getRootProps, getInputProps }) => (
                 <section>
-                  <div {...getRootProps()}>
+                  <div {...getRootProps()} className="dropzone">
                     <input {...getInputProps()} />
                     <p>
                       Drag 'n' drop some files here, or click to select files
@@ -173,20 +190,28 @@ const Addblog = () => {
               )}
             </Dropzone>
           </div>
-          <div className="showimages d-flex flex-wrap mt-3 gap-3">
-            {img?.map((i, j) => {
-              return (
-                <div className=" position-relative" key={j}>
-                  <button
-                    type="button"
-                    onClick={() => dispatch(delImg(i.public_id))}
-                    className="btn-close position-absolute"
-                    style={{ top: "10px", right: "10px" }}
-                  ></button>
-                  <img src={i.url} alt="" width={200} height={200} />
-                </div>
-              );
-            })}
+          <div className="error">
+            {formik.touched.images && formik.errors.images}
+          </div>
+
+          <div className="showimages d-flex flex-wrap gap-3">
+            {imgShow?.map((image, index) => (
+              <div className="position-relative" key={index}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch(delImg(image.public_id));
+                    const updatedImages = formik.values.images.filter(
+                      (img) => img.public_id !== image.public_id
+                    );
+                    formik.setFieldValue("images", updatedImages);
+                  }}
+                  className="btn-close position-absolute"
+                  style={{ top: "10px", right: "10px" }}
+                ></button>
+                <img src={image.url} alt="" width={200} height={200} />
+              </div>
+            ))}
           </div>
 
           <button
@@ -201,4 +226,4 @@ const Addblog = () => {
   );
 };
 
-export default Addblog;
+export default AddBlog;

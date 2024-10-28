@@ -13,7 +13,7 @@ import { addToWishlist } from "../features/products/productSlice";
 import Banner1 from "../banners/Banner1";
 import ProductGrid from "../components/ProductGrid";
 
-const Home = () => {  
+const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state?.product?.product);
 
@@ -37,9 +37,8 @@ const Home = () => {
   };
   return (
     <>
+      <Banner1 />
 
-      <Banner1/>
-      
       <ProductGrid tag="featured" title="Featured Collection" />
 
       <Container class1="special-wrapper py-5 home-wrapper-2">
@@ -70,11 +69,11 @@ const Home = () => {
             })}
         </div>
       </Container>
-
       <Container class1="popular-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <h3 className="section-heading">Our Popular Products</h3>
+            <h3 className="section-heading"></h3>
           </div>
         </div>
         <div className="row">
