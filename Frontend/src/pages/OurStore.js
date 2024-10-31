@@ -136,7 +136,7 @@ const OurStore = () => {
 
           {/* Products Section */}
           <div className="col-lg-9 col-md-8">
-            <div className="filter-sort-grid mb-4">
+            <div className="filter-sort-grid mb-2">
               <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
                 <div className="d-flex align-items-center gap-2 mb-3 mb-md-0">
                   <p className="mb-0" style={{ width: "100px" }}>Sort By:</p>

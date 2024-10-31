@@ -48,14 +48,6 @@ const ProductGrid = ({ tag, title }) => {
                                             />
                                             <div className="absolute bottom-0 p-8 w-full opacity-0 group-hover:opacity-100">
                                                 <button
-                                                    className="font-medium text-base leading-4 text-gray-800 bg-white py-3 w-full"
-                                                    onClick={() => {
-                                                        // Implement add to cart functionality
-                                                    }}
-                                                >
-                                                    Add to Bag
-                                                </button>
-                                                <button
                                                     className="bg-transparent font-medium text-base leading-4 border-2 border-white py-3 w-full mt-2 text-white"
                                                     onClick={() => navigate("/product/" + item?._id)}
                                                 >
