@@ -1,151 +1,153 @@
 import React, { useEffect, useState } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
+import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import Container from "../components/Container";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteCartProduct,
+  getUserCart,
+  updateCartProduct,
+} from "../features/user/userSlice";
 
 const Cart = () => {
-  const [userCartState, setUserCartState] = useState([
-    {
-      cartItemId: '1',
-      productCode: 'RF293',
-      title: 'North wolf bag 01',
-      height: '10 inches',
-      color: 'Black',
-      composition: '100% calf leather',
-      price: 29.99,
-      quantity: 1,
-      image: 'https://product.hstatic.net/200000017420/product/214a4844_1_43588626f54c47c7bbcd361ae41ad024_master.jpg',
+  const getTokenFromLocalStorage = localStorage.getItem("customer")
+    ? JSON.parse(localStorage.getItem("customer"))
+    : null;
+  const config2 = {
+    headers: {
+      Authorization: `Bearer ${
+        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
+      }`,
+      Accept: "application/json",
     },
-    {
-      cartItemId: '2',
-      productCode:'RF293',
-      title: 'North wolf bag 02',
-      height: '10 inches',
-      color:'Black',
-      composition:'100% calf leather',
-      price: 39.99,
-      quantity: 2,
-      image: 'https://product.hstatic.net/200000017420/product/10__26__285a3a6ac1504cc8b6187f4bdef83092_master.jpg',
-    },
-    {
-      cartItemId: '3',
-      productCode:'RF293',
-      title: 'North wolf bag 03',
-      height: '10 inches',
-      color:'Black',
-      composition:'100% calf leather',
-      price: 19.99,
-      quantity: 1,
-      image: 'https://product.hstatic.net/200000017420/product/214a4783_e93689f851f144179235b7c66e3891ba_master.jpg',
-    },
-  ]);
+  };
+  const dispatch = useDispatch();
+  const [productupdateDetail, setProductupdateDetail] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(null);
+  const userCartState = useSelector((state) => state.auth.cartProducts);
 
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [productUpdateDetail, setProductUpdateDetail] = useState(null);
-
-  // Cập nhật tổng tiền mỗi khi có thay đổi trong giỏ hàng
   useEffect(() => {
-    const sum = userCartState.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    if (productupdateDetail !== null) {
+      dispatch(
+        updateCartProduct({
+          cartItemId: productupdateDetail?.cartItemId,
+          quantity: productupdateDetail?.quantity,
+        })
+      );
+      setTimeout(() => {
+        dispatch(getUserCart(config2));
+      }, 200);
+    }
+  }, [productupdateDetail]);
+
+
+  const deleteACartProduct = (id) => {
+    dispatch(deleteCartProduct({ id: id, config2: config2 }));
+    setTimeout(() => {
+      dispatch(getUserCart(config2));
+    }, 200);
+  };
+
+  useEffect(() => {
+    let sum = 0;
+    userCartState?.forEach((item) => {
+      sum += Number(item.quantity) * item.price;
+    });
     setTotalAmount(sum);
   }, [userCartState]);
-
-  // Cập nhật số lượng sản phẩm
-  const updateQuantity = (cartItemId, newQuantity) => {
-    setUserCartState(prevState => 
-      prevState.map(item => 
-        item.cartItemId === cartItemId ? { ...item, quantity: Number(newQuantity) } : item
-      )
-    );
-  };
-
-  // Xóa sản phẩm khỏi giỏ hàng
-  const removeFromCart = (cartItemId) => {
-    setUserCartState(prevState => prevState.filter(item => item.cartItemId !== cartItemId));
-  };
 
   return (
     <>
       <Meta title={"Cart"} />
       <BreadCrumb title="Cart" />
-      <Container class1="py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="col-span-2">
-            {userCartState.length > 0 ? (
-              userCartState.map((item) => (
-                <div className="flex items-center border-b border-gray-300 py-6 px-8 " key={item.cartItemId}>
-                <div className="flex-shrink-0">
-                  <img src={item.image} alt={item.title} className="!h-44 !w-44" />
-                  </div>
-                  <div className="ml-12 flex-grow">
-                    <p className="text-gray-600">{item.productCode}</p>
-                    <p className="flex justify-between">
-                    <span><h5 className="text-lg font-semibold mt-2 mb-2">{item.title}</h5></span>
-                    <span className="d-flex justify-content-between align-items-center">
-                        <div className="quantity px-72">
-                          <select
-                            value={item.quantity}
-                            onChange={(e) => updateQuantity(item.cartItemId, e.target.value)}
-                            className="border rounded-md p-1"
-                          >
-                            {[...Array(4)].map((_, index) => (
-                              <option key={index + 1} value={index + 1}>{index + 1}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </span>
-                    </p>
-                    <p className="text-gray-600">Height: {item.height}</p>
-                    <p className="text-gray-600">Color: {item.color}</p>
-                    <p className="text-gray-600">Composition: {item.composition}</p>
-
-                    {/* Add to favorites and Remove options */}
-                    <p className="flex justify-between">
-                    <div className="mt-2">
-                      <span className="text-black underline cursor-pointer hover:text-blue-700 mr-4 whitespace-nowrap">
-                        Add to favorites
-                      </span>
-                      <span 
-                        className="text-red-500 underline cursor-pointer hover:text-red-700" 
-                        onClick={() => removeFromCart(item.cartItemId)}
-                      >
-                        Remove
-                      </span>
-                      <span className="px-72">${item.price.toFixed(2)}</span>
+      <Container class1="cart-wrapper home-wrapper-2 py-5">
+        <div className="w-full bg-white overflow-y-auto overflow-x-hidden">
+          <div className="flex md:flex-row flex-col justify">
+            <div className="lg:w-3/5 w-full md:pl-10 pl-4 pr-10 md:pr-4 md:py-12 py-8">
+              <p className="text-5xl font-black leading-10 text-gray-800 pt-3">
+                Card
+              </p>
+              {userCartState &&
+                userCartState.map((item, index) => (
+                  <div
+                    key={index}
+                    className="md:flex items-center mt-14 py-8 border-t border-gray-200"
+                  >
+                    <div className="w-1/4">
+                      <img
+                        src={item?.productId.images[0].url}
+                        className="w-full h-full object-center object-cover"
+                        alt={item?.productId.title}
+                      />
                     </div>
-                    </p>
-
+                    <div className="md:pl-3 md:w-3/4">
+                      <p className="text-3xl font-black leading-none text-gray-800">
+                        {item?.productId.title}
+                      </p>
+                      <div className="flex items-center justify-between w-full pt-1">
+                        <p className="text-base font-black leading-none text-gray-800">
+                          Rs. {item?.price}
+                        </p>
+                        <input
+                          type="number"
+                          min="1"
+                          max="10"
+                          value={item?.quantity}
+                          className="py-2 px-1 border border-gray-200 focus:outline-none"
+                          onChange={(e) =>
+                            setProductupdateDetail({
+                              cartItemId: item?._id,
+                              quantity: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <p className="text-base leading-3 text-gray-600 py-4">
+                        Color: 
+                        <ul className="colors ps-0 pt-1">
+                            <li
+                              style={{ backgroundColor: item?.color.title }}
+                            ></li>
+                          </ul>
+                      </p>
+                      <div className="flex items-center justify-between pt-5 pr-6">
+                        <div className="flex items-center">
+                          <p
+                            className="text-xs leading-3 underline text-red-500 cursor-pointer"
+                            onClick={() => deleteACartProduct(item?._id)}
+                          >
+                            <AiFillDelete className="inline mr-1" />
+                            Remove
+                          </p>
+                        </div>
+                        <p className="text-base font-black leading-none text-gray-800">
+                          Rs. {item?.quantity * item?.price}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-600">Your cart is empty.</p>
-            )}
-          </div>
-
-          <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h2 className="text-3xl font-bold">Summary</h2>
-            <div className="mt-4">
-              <p className="flex justify-between">
-                <span>Subtotal:</span>
-                <span>${totalAmount.toFixed(2)}</span>
+                ))}
+            </div>
+            <div className="lg:w-2/5 w-full bg-gray-100 px-14 py-20">
+              <p className="text-4xl font-black leading-9 text-gray-800">
+                Summary
               </p>
-              <p className="flex justify-between">
-                <span>Shipping:</span>
-                <span>$30.00</span>
+              <div className="flex items-center justify-between pt-16">
+                <p className="text-base leading-none text-gray-800">Subtotal</p>
+                <p className="text-base leading-none text-gray-800">
+                  Rs. {totalAmount ?? 0}
+                </p>
+              </div>
+              <p className="text-xs leading-3 text-gray-600 pt-4">
+                Taxes and shipping calculated at checkout
               </p>
-              <p className="flex justify-between">
-                <span>Tax:</span>
-                <span>$35.00</span>
-              </p>
-              <hr className="my-32" />
-              <p className="flex justify-between text-xl">
-                <span>Total:</span>
-                <span className="font-bold text-2xl">${(totalAmount + 30 + 35).toFixed(2)}</span>
-              </p>
-              <Link to="/checkout">
-                <button className="mt-4 bg-gray-800 text-white py-3 px-36 rounded hover:bg-red-800 transition w-full">Checkout</button>
-              </Link>
+              <div className="pt-10 justify-items-end">
+                <Link to="/checkout" className="button w-full text-center">
+                  Checkout
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -155,4 +157,3 @@ const Cart = () => {
 };
 
 export default Cart;
-

@@ -42,9 +42,9 @@ function App() {
             <Route
               path="cart"
               element={
-                //<PrivateRoutes>
+                <PrivateRoutes>
                   <Cart />
-                //</PrivateRoutes>
+                </PrivateRoutes>
               }
             />
             <Route
