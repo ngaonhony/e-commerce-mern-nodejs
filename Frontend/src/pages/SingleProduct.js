@@ -132,26 +132,26 @@ const SingleProduct = () => {
     <>
       <Meta title={"Product Name"} />
       <BreadCrumb title={productState?.title} />
-      <Container class1="main-product-wrapper py-5 home-wrapper-2">
-        <div className="row">
-          <div className="col-6">
-            <div className="main-product-image">
+      <Container className="main-product-wrapper bg-white py-5 home-wrapper-2">
+        <div className="row flex-row-reverse h-full">
+          <div className="col-12 col-md-6 flex rounded-[10px] h-full bg-white lg:flex-row flex-col">
+            <div className="main-product-image rounded-none lg:h-full flex-1 h-2/3">
               <div>
                 <ReactImageZoom {...props} />
               </div>
             </div>
-            <div className="other-product-images d-flex flex-wrap gap-15">
-              {productState?.images.map((item, index) => {
+            <div className=" d-flex flex-wrap gap-15 py-[12px] bg-white rounded-none">
+              {productState?.images.slice(0,4).map((item, index) => {
                 return (
                   <div>
-                    <img src={item?.url} className="img-fluid" alt="" />
+                    <img src={item?.url} className="lg:h-1/3 object-cover lg:p-2 lg:w-[150px] w-1/3 px-[20px]" alt="" />
                   </div>
                 );
               })}
             </div>
           </div>
-          <div className="col-6">
-            <div className="main-product-details">
+          <div className="col-12 col-md-6 h-full">
+            <div className="main-product-details h-full">
               <div className="border-bottom">
                 <h3 className="title">{productState?.title}</h3>
               </div>
