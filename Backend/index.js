@@ -19,6 +19,15 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const cors = require("cors");
 
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./config/serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
 dbConnect();
 app.use(morgan("dev"));
 app.use(cors());

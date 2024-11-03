@@ -1,4 +1,5 @@
 const express = require("express");
+
 const {
   createUser,
   loginUserCtrl,
@@ -18,6 +19,7 @@ const {
   saveAddress,
   userCart,
   getUserCart,
+  loginUserCtrlGG,
 
   createOrder,
 
@@ -31,6 +33,7 @@ const {
   getAllOrders,
   getsingleOrder,
   updateOrder,
+  
 } = require("../controller/userCtrl");
 const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
 const { checkout, paymentVerification } = require("../controller/paymentCtrl");
@@ -43,6 +46,7 @@ router.put("/reset-password/:token", resetPassword);
 
 router.put("/password", authMiddleware, updatePassword);
 router.post("/login", loginUserCtrl);
+router.post("/loginGG", loginUserCtrlGG);
 router.post("/admin-login", loginAdmin);
 router.post("/cart", authMiddleware, userCart);
 router.post("/order/checkout", authMiddleware, checkout);
