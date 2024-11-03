@@ -21,9 +21,9 @@ const Blog = () => {
     <>
       <Meta title={"Blogs"} />
       <Container class1="blog-wrapper home-wrapper-2 py-5">
-        <div className="row">
-          <div className="col-3">
-            <div className="filter-card mb-3">
+        <div className="flex flex-col md:flex-col w-full justify-center items-center">
+          <div className=" col-12 md:w-3/5 mb-4 md:mb-0 flex items-center justify-center">
+            <div className="filter-card p-2 rounded-lg shadow-lg w-full justify-center items-center">
               <h3 className="filter-title">Find By Categories</h3>
               <div>
                 <ul className="ps-0">
@@ -35,12 +35,12 @@ const Blog = () => {
               </div>
             </div>
           </div>
-          <div className="col-9">
-            <div className="row">
+        <div className="col-12 md:w-3/5 flex items-center justify-center rounded-lg shadow-lg">
+            <div className="row w-full">
               {blogState &&
                 blogState?.map((item, index) => {
                   return (
-                    <div className="col-6 mb-3" key={index}>
+                    <div className="col-12 lg:w-full lg:h-1/5 lg:p-1" key={index}>
                       <BlogCard
                         id={item?._id}
                         title={item?.title}
@@ -62,3 +62,4 @@ const Blog = () => {
 };
 
 export default Blog;
+
