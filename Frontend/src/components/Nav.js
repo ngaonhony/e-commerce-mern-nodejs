@@ -51,14 +51,14 @@ export default function Nav() {
   const [productOpt, setProductOpt] = useState([]);
   useEffect(() => {
     let sum = 0;
-    let items = 0; // Variable to hold total items
+    let items = cartState?.length || 0; // Count distinct items only
     for (let index = 0; index < cartState?.length; index++) {
       sum += Number(cartState[index].quantity) * cartState[index].price;
-      items += Number(cartState[index].quantity); // Sum up quantities
     }
     setTotal(sum);
-    setTotalItems(items); // Update totalItems state
+    setTotalItems(items); // Update totalItems state with distinct items count
   }, [cartState]);
+
 
   useEffect(() => {
     let data = [];
