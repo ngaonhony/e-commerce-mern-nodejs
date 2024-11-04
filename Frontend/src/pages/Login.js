@@ -8,6 +8,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/user/userSlice";
+import { auth, provider, signInWithPopup } from "../firebase/firebaseConfig";
 
 let loginSchema = yup.object({
   email: yup
@@ -36,6 +37,40 @@ const Login = () => {
       // }, 1000);
     },
   });
+
+  // const handleGoogleLogin = () => signInWithPopup(auth, provider)
+  // .then((response) => {
+  //   console.log(response);
+  // })
+  // .catch((error) => {
+  //   console.log(error)
+  // })
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+      // console.log(idToken);
+
+      // Gửi idToken lên server để xác thực và lưu trữ
+      const response = await fetch("http://localhost:5000/api/user/loginGG", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+
+      const data = await response.json();
+      console.log("Thông tin người dùng từ server:", data);
+      localStorage.setItem("accessToken", data.accessToken);
+      console.log("Đăng nhập thành công");
+      navigate("/"); // Điều hướng về trang chủ sau khi đăng nhập thành công
+    } catch (error) {
+      console.error("Đăng nhập với Google thất bại:", error);
+    }
+  };
+
   useEffect(() => {
     if (authState.user !== null && authState.isError === false) {
       window.location.href = "/";
@@ -92,6 +127,21 @@ const Login = () => {
                   </div>
                 </div>
               </form>
+              <div className="mt-3 flex justify-center">
+                <button
+                  className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-lg p-3 bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md transition-all duration-200"
+                  onClick={handleGoogleLogin}
+                >
+                  <img
+                    height={20}
+                    width={20}
+                    src="https://th.bing.com/th/id/R.ad34078a2230ebc6f473eb86fd590b0a?rik=87VVUreGE1qfsg&pid=ImgRaw&r=0"
+                    alt="Google"
+                    className="h-5 w-5"
+                  />
+                  Đăng nhập với Google
+                </button>
+              </div>
             </div>
           </div>
         </div>

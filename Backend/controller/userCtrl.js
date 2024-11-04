@@ -13,6 +13,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("./emailCtrl");
 const { createPasswordResetToken } = require("../models/userModel");
+const admin = require("firebase-admin");
 
 // Create a User ----------------------------------------------
 
@@ -37,6 +38,58 @@ const createUser = asyncHandler(async (req, res) => {
      * TODO:if user found then thow an error: User already exists
      */
     throw new Error("User Already Exists");
+  }
+});
+
+const loginUserCtrlGG = asyncHandler(async (req, res) => {
+  const { idToken } = req.body;
+  // console.log(idToken);
+
+  try {
+    // Xác minh idToken
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    // console.log(decodedToken);
+    const { uid, email, name } = decodedToken;
+
+    let firstname = "";  
+    let lastname = "";
+
+    if (name) {
+      const nameParts = name.split(" ");
+      lastname = nameParts[0]; // Lấy chữ đầu tiên làm lastname
+      firstname = nameParts.slice(1).join(" "); // Phần còn lại là firstname
+    }
+
+    // Kiểm tra xem người dùng đã tồn tại trong MongoDB chưa
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        uid,
+        firstname,
+        lastname,
+        email,
+        mobile: "",
+        password: "defaultPassword",
+        role: "user",
+      });
+    } else {
+      user.lastname = lastname;
+      user.firstname = firstname;
+      await user.save();
+    }
+
+    res.json({
+      _id: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      mobile: user.mobile,
+      accessToken: generateToken(user._id),
+    });
+  } catch (error) {
+    console.error("Error during Google login:", error);
+    res.status(400).json({ message: "Invalid ID Token" });
   }
 });
 
@@ -619,6 +672,7 @@ module.exports = {
   getsingleOrder,
   updateOrder,
   getYearlyTotalOrder,
+  loginUserCtrlGG,
 
   removeProductFromCart,
   updateProductQuantityFromCart,
