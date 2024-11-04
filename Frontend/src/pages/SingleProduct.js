@@ -137,7 +137,7 @@ const SingleProduct = () => {
           <div className="col-12 col-md-6 flex rounded-[10px] h-full bg-white lg:flex-row flex-col">
             <div className="main-product-image rounded-none lg:h-full flex-1 h-2/3">
               <div>
-                <ReactImageZoom {...props} />
+                <img src={props.img} alt="Main product" className="object-cover w-full h-full" />
               </div>
             </div>
             <div className=" d-flex flex-wrap gap-15 py-[12px] bg-white rounded-none">
