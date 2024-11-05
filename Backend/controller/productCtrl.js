@@ -135,18 +135,21 @@ const addToWishlist = asyncHandler(async (req, res) => {
 });
 
 const rating = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  const { star, prodId, comment } = req.body;
+  const { _id } = req.user; // User ID from the authenticated user
+  const { star, prodId, comment } = req.body; // Extracting star, product ID, and comment from the request body
   try {
+    // Find the product by ID
     const product = await Product.findById(prodId);
+
+    // Check if the user has already rated the product
     let alreadyRated = product.ratings.find(
-      (userId) => userId.postedby.toString() === _id.toString()
+      (rating) => rating.postedby.toString() === _id.toString()
     );
+
     if (alreadyRated) {
-      const updateRating = await Product.updateOne(
-        {
-          ratings: { $elemMatch: alreadyRated },
-        },
+      // If already rated, update the existing rating
+      await Product.updateOne(
+        { _id: prodId, "ratings.postedby": _id },
         {
           $set: { "ratings.$.star": star, "ratings.$.comment": comment },
         },
@@ -155,7 +158,8 @@ const rating = asyncHandler(async (req, res) => {
         }
       );
     } else {
-      const rateProduct = await Product.findByIdAndUpdate(
+      // If not rated yet, add a new rating
+      await Product.findByIdAndUpdate(
         prodId,
         {
           $push: {
@@ -171,12 +175,16 @@ const rating = asyncHandler(async (req, res) => {
         }
       );
     }
-    const getallratings = await Product.findById(prodId);
-    let totalRating = getallratings.ratings.length;
-    let ratingsum = getallratings.ratings
+
+    // Recalculate the total rating
+    const updatedProduct = await Product.findById(prodId);
+    let totalRating = updatedProduct.ratings.length;
+    let ratingsum = updatedProduct.ratings
       .map((item) => item.star)
       .reduce((prev, curr) => prev + curr, 0);
     let actualRating = Math.round(ratingsum / totalRating);
+
+    // Update the product's total rating
     let finalproduct = await Product.findByIdAndUpdate(
       prodId,
       {
@@ -184,11 +192,14 @@ const rating = asyncHandler(async (req, res) => {
       },
       { new: true }
     );
+
+    // Send the updated product as a response
     res.json(finalproduct);
   } catch (error) {
     throw new Error(error);
   }
 });
+
 
 module.exports = {
   createProduct,

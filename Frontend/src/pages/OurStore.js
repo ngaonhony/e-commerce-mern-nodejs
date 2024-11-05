@@ -9,7 +9,11 @@ import { Link } from "react-router-dom";
 
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
-  const productState = useSelector((state) => state?.product?.product);
+  const dispatch = useDispatch();
+
+  // Fetch the products array from the state
+  const productState = useSelector((state) => state?.product?.product) || [];
+
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
@@ -21,38 +25,118 @@ const OurStore = () => {
   const [maxPrice, setmaxPrice] = useState(null);
   const [sort, setSort] = useState(null);
 
-  const dispatch = useDispatch();
+  // State for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 6;
 
+  // This will hold the filtered and sorted products
+  const [displayProducts, setDisplayProducts] = useState([]);
+
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, [dispatch]);
+
+  // Update filters whenever productState changes
   useEffect(() => {
     let newBrands = [];
-    let category = [];
-    let newtags = [];
+    let categoryList = [];
+    let newTags = [];
 
-    for (let index = 0; index < productState?.length; index++) {
+    for (let index = 0; index < productState.length; index++) {
       const element = productState[index];
       newBrands.push(element.brand);
-      category.push(element.category);
-      newtags.push(element.tags);
+      categoryList.push(element.category);
+      newTags.push(...element.tags); // Assuming tags is an array
     }
     setBrands([...new Set(newBrands)]);
-    setCategories([...new Set(category)]);
-    setTags([...new Set(newtags)]);
+    setCategories([...new Set(categoryList)]);
+    setTags([...new Set(newTags)]);
   }, [productState]);
 
+  // Apply filters, sorting, and pagination
   useEffect(() => {
-    getProducts();
-  }, [sort, tag, brand, category, minPrice, maxPrice]);
+    let filteredProducts = [...productState];
 
-  const getProducts = () => {
-    dispatch(
-      getAllProducts({ sort, tag, brand, category, minPrice, maxPrice })
+    // Apply filters
+    if (category) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.category === category
+      );
+    }
+
+    if (brand) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.brand === brand
+      );
+    }
+
+    if (tag) {
+      filteredProducts = filteredProducts.filter((product) =>
+        product.tags.includes(tag)
+      );
+    }
+
+    if (minPrice) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price >= parseFloat(minPrice)
+      );
+    }
+
+    if (maxPrice) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price <= parseFloat(maxPrice)
+      );
+    }
+
+    // Apply sorting
+    if (sort) {
+      const sortKey = sort.replace("-", "");
+      const sortOrder = sort.startsWith("-") ? -1 : 1;
+
+      filteredProducts.sort((a, b) => {
+        if (a[sortKey] < b[sortKey]) return -1 * sortOrder;
+        if (a[sortKey] > b[sortKey]) return 1 * sortOrder;
+        return 0;
+      });
+    }
+
+    // Update total pages based on filtered products
+    setTotalPages(Math.ceil(filteredProducts.length / pageSize));
+
+    // Apply pagination
+    const startIndex = (currentPage - 1) * pageSize;
+    const paginatedProducts = filteredProducts.slice(
+      startIndex,
+      startIndex + pageSize
     );
+
+    setDisplayProducts(paginatedProducts);
+  }, [
+    productState,
+    category,
+    brand,
+    tag,
+    minPrice,
+    maxPrice,
+    sort,
+    currentPage,
+    pageSize,
+  ]);
+
+  // Total number of pages for pagination
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(productState.length / pageSize)
+  );
+
+  // Reset current page when filters change
+  const handleFilterChange = (filterFunction) => {
+    filterFunction();
+    setCurrentPage(1);
   };
 
   return (
     <>
       <Meta title={"Our Store"} />
-      <BreadCrumb title="Our Store" />
       <Container class1="store-wrapper home-wrapper-2 py-5 min-vh-100">
         <div className="row gx-2 gy-4">
           {/* Sidebar Filters */}
@@ -60,13 +144,16 @@ const OurStore = () => {
             <div className="filter-card mb-3">
               <h3 className="filter-title">Shop By Categories</h3>
               <ul className="list-unstyled">
-                <li onClick={() => setCategory(null)}>
+                <li onClick={() => handleFilterChange(() => setCategory(null))}>
                   <Link to="/product" className="text-muted">
                     All
                   </Link>
                 </li>
                 {categories.map((item, index) => (
-                  <li key={index} onClick={() => setCategory(item)}>
+                  <li
+                    key={index}
+                    onClick={() => handleFilterChange(() => setCategory(item))}
+                  >
                     {item}
                   </li>
                 ))}
@@ -84,7 +171,9 @@ const OurStore = () => {
                       type="number"
                       className="form-control"
                       placeholder="From"
-                      onChange={(e) => setminPrice(e.target.value)}
+                      onChange={(e) =>
+                        handleFilterChange(() => setminPrice(e.target.value))
+                      }
                     />
                     <label>From</label>
                   </div>
@@ -93,7 +182,9 @@ const OurStore = () => {
                       type="number"
                       className="form-control"
                       placeholder="To"
-                      onChange={(e) => setmaxPrice(e.target.value)}
+                      onChange={(e) =>
+                        handleFilterChange(() => setmaxPrice(e.target.value))
+                      }
                     />
                     <label>To</label>
                   </div>
@@ -107,7 +198,7 @@ const OurStore = () => {
                   {tags.map((item, index) => (
                     <span
                       key={index}
-                      onClick={() => setTag(item)}
+                      onClick={() => handleFilterChange(() => setTag(item))}
                       className="badge bg-light text-secondary py-2 px-3"
                     >
                       {item}
@@ -123,7 +214,7 @@ const OurStore = () => {
                   {brands.map((item, index) => (
                     <span
                       key={index}
-                      onClick={() => setBrand(item)}
+                      onClick={() => handleFilterChange(() => setBrand(item))}
                       className="badge bg-light text-secondary py-2 px-3"
                     >
                       {item}
@@ -139,11 +230,15 @@ const OurStore = () => {
             <div className="filter-sort-grid mb-2">
               <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
                 <div className="d-flex align-items-center gap-2 mb-3 mb-md-0">
-                  <p className="mb-0" style={{ width: "100px" }}>Sort By:</p>
+                  <p className="mb-0" style={{ width: "100px" }}>
+                    Sort By:
+                  </p>
                   <select
                     defaultValue={"manual"}
                     className="form-select"
-                    onChange={(e) => setSort(e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange(() => setSort(e.target.value))
+                    }
                   >
                     <option value="title">Alphabetically, A-Z</option>
                     <option value="-title">Alphabetically, Z-A</option>
@@ -156,9 +251,8 @@ const OurStore = () => {
 
                 <div className="d-flex align-items-center gap-2">
                   <p className="totalproducts mb-0">
-                    {productState?.length} Products
+                    {displayProducts.length} Products
                   </p>
-                  
                 </div>
               </div>
             </div>
@@ -166,9 +260,70 @@ const OurStore = () => {
             {/* Product List */}
             <div className="products-list pb-5">
               <div className="d-flex gap-2 flex-wrap">
-                <ProductCard data={productState || []} grid={grid} />
+                <ProductCard data={displayProducts} grid={grid} />
               </div>
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="pagination d-flex justify-content-center">
+                <nav aria-label="Page navigation">
+                  <ul className="pagination">
+                    {/* Previous Button */}
+                    <li
+                      className={`page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </button>
+                    </li>
+
+                    {/* Page Numbers */}
+                    {Array.from({ length: totalPages }, (_, index) => index + 1)
+                      .slice(
+                        Math.max(0, currentPage - 3),
+                        Math.min(totalPages, currentPage + 2)
+                      )
+                      .map((pageNumber) => (
+                        <li
+                          key={pageNumber}
+                          className={`page-item ${
+                            currentPage === pageNumber ? "active" : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => setCurrentPage(pageNumber)}
+                          >
+                            {pageNumber}
+                          </button>
+                        </li>
+                      ))}
+
+                    {/* Next Button */}
+                    <li
+                      className={`page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            )}
           </div>
         </div>
       </Container>

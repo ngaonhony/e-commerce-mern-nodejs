@@ -15,7 +15,7 @@ router.post("/", createProduct);
 
 router.get("/:id", getaProduct);
 router.put("/wishlist", addToWishlist);
-router.put("/rating", rating);
+router.put("/rating", authMiddleware, rating);
 
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);

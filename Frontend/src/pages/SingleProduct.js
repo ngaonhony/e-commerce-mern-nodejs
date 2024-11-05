@@ -86,7 +86,7 @@ const SingleProduct = () => {
     textField.remove();
   };
 
-  const closeModal = () => {};
+  const closeModal = () => { };
   const [popularProduct, setPopularProduct] = useState([]);
 
   useEffect(() => {
@@ -113,20 +113,18 @@ const SingleProduct = () => {
   const addRatingToProduct = () => {
     if (star === null) {
       toast.error("Please add star rating");
-      return false;
-    } else if (comment === null) {
-      toast.error("Please Write Review About the Product");
-      return false;
-    } else {
-      dispatch(
-        addRating({ star: star, comment: comment, prodId: getProductId })
-      );
-      setTimeout(() => {
-        dispatch(getAProduct(getProductId));
-      }, 100);
+      return;
     }
-    return false;
+    if (comment === null) {
+      toast.error("Please write a review about the product");
+      return;
+    }
+    dispatch(addRating({ star, comment, prodId: getProductId }));
+    setTimeout(() => {
+      dispatch(getAProduct(getProductId));
+    }, 100);
   };
+
 
   return (
     <>
@@ -141,7 +139,7 @@ const SingleProduct = () => {
               </div>
             </div>
             <div className=" d-flex flex-wrap gap-15 py-[12px] bg-white rounded-none">
-              {productState?.images.slice(0,4).map((item, index) => {
+              {productState?.images.slice(0, 4).map((item, index) => {
                 return (
                   <div>
                     <img src={item?.url} className="lg:h-1/3 object-cover lg:p-2 lg:w-[150px] w-1/3 px-[20px]" alt="" />
