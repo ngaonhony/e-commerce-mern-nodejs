@@ -1,12 +1,14 @@
+// productSlice.js
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { productSevice } from "./productService";
+import { productService } from "./productService";
 
 export const getAllProducts = createAsyncThunk(
-  "product/get",
+  "product/getAllProducts",
   async (data, thunkAPI) => {
     try {
-      return await productSevice.getProducts(data);
+      return await productService.getProducts(data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -17,7 +19,7 @@ export const getAProduct = createAsyncThunk(
   "product/getAProduct",
   async (id, thunkAPI) => {
     try {
-      return await productSevice.getSingleProduct(id);
+      return await productService.getSingleProduct(id);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -25,106 +27,107 @@ export const getAProduct = createAsyncThunk(
 );
 
 export const addToWishlist = createAsyncThunk(
-  "product/wishlist",
+  "product/addToWishlist",
   async (prodId, thunkAPI) => {
     try {
-      return await productSevice.addToWishlist(prodId);
+      return await productService.addToWishlist(prodId);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
 
-const productState = {
-  product: "",
+export const addRating = createAsyncThunk(
+  "product/addRating",
+  async (data, thunkAPI) => {
+    try {
+      return await productService.rateProduct(data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+const initialState = {
+  product: [],
+  singleproduct: null,
+  wishlist: [],
+  addToWishlist: null,
+  rating: null,
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
 };
 
-export const addRating = createAsyncThunk(
-  "product/rating",
-  async (data, thunkAPI) => {
-    try {
-      return await productSevice.rateProduct(data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
 export const productSlice = createSlice({
   name: "product",
-  initialState: productState,
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // getAllProducts
       .addCase(getAllProducts.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getAllProducts.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isError = false;
         state.isSuccess = true;
         state.product = action.payload;
       })
       .addCase(getAllProducts.rejected, (state, action) => {
         state.isError = true;
         state.isLoading = false;
-        state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.error.message;
+        toast.error(state.message);
       })
-      .addCase(addToWishlist.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(addToWishlist.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isError = false;
-        state.isSuccess = true;
-        state.addToWishlist = action.payload;
-        state.message = "Product Added to Wishlist!";
-      })
-      .addCase(addToWishlist.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.isSuccess = false;
-        state.message = action.error;
-      })
+      // getAProduct
       .addCase(getAProduct.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getAProduct.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isError = false;
         state.isSuccess = true;
         state.singleproduct = action.payload;
-        state.message = "Product Fetched Successfully";
       })
       .addCase(getAProduct.rejected, (state, action) => {
         state.isError = true;
         state.isLoading = false;
-        state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.error.message;
+        toast.error(state.message);
       })
+      // addToWishlist
+      .addCase(addToWishlist.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(addToWishlist.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.addToWishlist = action.payload;
+        state.wishlist = action.payload.wishlist;
+        toast.success("Wishlist updated!");
+      })
+      .addCase(addToWishlist.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.message = action.error.message;
+        toast.error(state.message);
+      })
+      // addRating
       .addCase(addRating.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(addRating.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isError = false;
         state.isSuccess = true;
         state.rating = action.payload;
-        state.message = "Rating Added Successfully";
-        if (state.isSuccess) {
-          toast.success("Rating Added Successfully");
-        }
+        toast.success("Rating Added Successfully");
       })
       .addCase(addRating.rejected, (state, action) => {
         state.isError = true;
         state.isLoading = false;
-        state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.error.message;
+        toast.error(state.message);
       });
   },
 });

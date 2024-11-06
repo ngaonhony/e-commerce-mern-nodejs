@@ -100,35 +100,30 @@ const getAllProduct = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+
 const addToWishlist = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { prodId } = req.body;
   try {
     const user = await User.findById(_id);
-    const alreadyadded = user.wishlist.find((id) => id.toString() === prodId);
-    if (alreadyadded) {
-      let user = await User.findByIdAndUpdate(
+    const alreadyAdded = user.wishlist.find(
+      (id) => id.toString() === prodId.toString()
+    );
+    let updatedUser;
+    if (alreadyAdded) {
+      updatedUser = await User.findByIdAndUpdate(
         _id,
-        {
-          $pull: { wishlist: prodId },
-        },
-        {
-          new: true,
-        }
-      );
-      res.json(user);
+        { $pull: { wishlist: prodId } },
+        { new: true }
+      ).populate("wishlist");
     } else {
-      let user = await User.findByIdAndUpdate(
+      updatedUser = await User.findByIdAndUpdate(
         _id,
-        {
-          $push: { wishlist: prodId },
-        },
-        {
-          new: true,
-        }
-      );
-      res.json(user);
+        { $push: { wishlist: prodId } },
+        { new: true }
+      ).populate("wishlist");
     }
+    res.json(updatedUser);
   } catch (error) {
     throw new Error(error);
   }
