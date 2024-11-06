@@ -87,7 +87,7 @@ const Cart = () => {
   return (
     <>
       <Meta title={"Cart"} />
-      <Container class1="cart-wrapper home-wrapper-2 py-5">
+      <Container class1="cart-wrapper home-wrapper-2 py-5 ">
         <div className="w-full bg-white overflow-y-auto overflow-x-hidden">
           {userCartState && userCartState.length > 0 ? (
             <div className="flex md:flex-row flex-col justify-between">
@@ -161,7 +161,7 @@ const Cart = () => {
               </div>
 
               {/* Summary Section */}
-              <div className="lg:w-2/5 w-full bg-gray-100 px-14 py-20">
+              <div className="lg:w-2/5 w-full bg-gray-200 px-14 py-20">
                 <h2 className="text-4xl font-semibold text-gray-800 mb-8">
                   Summary
                 </h2>
