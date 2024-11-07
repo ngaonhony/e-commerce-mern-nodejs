@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { blogService } from "./blogService";
 
-export const getAllBlogs = createAsyncThunk("blogs/get", async (thunkAPI) => {
+export const getAllBlogs = createAsyncThunk("blogs/get", async (_, thunkAPI) => {
   try {
     return await blogService.getBlogs();
   } catch (error) {
@@ -18,8 +18,18 @@ export const getABlog = createAsyncThunk("blog/get", async (id, thunkAPI) => {
   }
 });
 
+export const getCategories = createAsyncThunk("categories/get", async (_, thunkAPI) => {
+  try {
+    return await blogService.getCategories();
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 const blogState = {
   blog: "",
+  singleblog: "",
+  categories: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -57,6 +67,21 @@ export const blogSlice = createSlice({
         state.singleblog = action.payload;
       })
       .addCase(getABlog.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getCategories.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getCategories.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.categories = action.payload;
+      })
+      .addCase(getCategories.rejected, (state, action) => {
         state.isError = true;
         state.isLoading = false;
         state.isSuccess = false;
