@@ -49,7 +49,9 @@ const Login = () => {
       });
 
       const data = await response.json();
-      localStorage.setItem("accessToken", data.accessToken);
+      // Lưu vào localStorage với tên mới
+      localStorage.setItem("token", data.token); // Đổi "accessToken" thành "token"
+      localStorage.setItem("customer", JSON.stringify(data)); // Đổi "user" thành "customer"
       navigate("/"); // Redirect to home page after successful login
     } catch (error) {
       console.error("Google login failed:", error);

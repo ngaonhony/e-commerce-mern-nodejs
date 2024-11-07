@@ -51,7 +51,7 @@ const loginUserCtrlGG = asyncHandler(async (req, res) => {
     // console.log(decodedToken);
     const { uid, email, name } = decodedToken;
 
-    let firstname = "";  
+    let firstname = "";
     let lastname = "";
 
     if (name) {
@@ -85,7 +85,7 @@ const loginUserCtrlGG = asyncHandler(async (req, res) => {
       lastname: user.lastname,
       email: user.email,
       mobile: user.mobile,
-      accessToken: generateToken(user._id),
+      token: generateToken(user._id),
     });
   } catch (error) {
     console.error("Error during Google login:", error);
