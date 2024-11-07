@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, Button, Text, TouchableOpacity } from 'react-native';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useRouter } from 'expo-router';
 
@@ -20,14 +20,14 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Đăng nhập</Text>
-      {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
+    <View className="flex-1 p-4">
+      <Text className="text-4xl my-4 text-center">Đăng nhập</Text>
+      {errorMessage ? <Text className="text-red-500">{errorMessage}</Text> : null}
       <TextInput
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
-        style={styles.input}
+        className="h-12 border border-gray-300 mb-3 px-2 rounded"
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -35,41 +35,16 @@ const LoginScreen = () => {
         placeholder="Mật khẩu"
         value={password}
         onChangeText={setPassword}
-        style={styles.input}
+        className="h-12 border border-gray-300 mb-3 px-2 rounded"
         secureTextEntry
       />
       <Button title="Đăng nhập" onPress={handleLogin} />
       <TouchableOpacity onPress={() => router.push('/auth/register')}>
-        <Text style={styles.linkText}>Chưa có tài khoản? Đăng ký</Text>
+        <Text className="mt-4 text-blue-500 text-center">Chưa có tài khoản? Đăng ký</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-    },
-    title: {
-      fontSize: 32,
-      marginVertical: 16,
-      textAlign: 'center',
-    },
-    input: {
-      height: 48,
-      borderColor: '#ccc',
-      borderWidth: 1,
-      marginBottom: 12,
-      paddingHorizontal: 8,
-      borderRadius: 4,
-    },
-    linkText: {
-      marginTop: 16,
-      color: 'blue',
-      textAlign: 'center',
-    },
-  });
   
