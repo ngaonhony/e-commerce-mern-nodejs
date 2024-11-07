@@ -54,9 +54,8 @@ const BlogItem = ({ item }) => {
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                         }}
-                    >
-                        {item?.description}
-                    </p>
+                        dangerouslySetInnerHTML={{ __html: item?.description?.replace(/<p>/g, '').replace(/<\/p>/g, '') }}
+                    ></p>
                 </div>
                 <div className="px-12 pb-10 w-full">
                     <a
