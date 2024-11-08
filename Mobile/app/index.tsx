@@ -1,11 +1,11 @@
-// app/index.tsx
-import React, { useContext } from 'react';
+import React from 'react';
 import { Redirect } from 'expo-router';
-import { AuthContext } from '../contexts/AuthContext';
+import { useSelector } from 'react-redux';
 import { View, ActivityIndicator } from 'react-native';
+import { RootState } from '../store';
 
 export default function Index() {
-  const { isAuthenticated, loading } = useContext(AuthContext);
+  const { isAuthenticated, loading } = useSelector((state: RootState) => state.auth);
 
   if (loading) {
     return (

@@ -1,116 +1,90 @@
-import React, { useContext, useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
-import { AuthContext } from '../../contexts/AuthContext';
-import { updateUserProfile } from '../../services/api/userService';
+import React, { useState } from 'react';
+import { View, TextInput, Alert, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
+import { RootState, AppDispatch } from '../../store';
+import { updateProfile, logout } from '../../store/authSlice';
 
 const UpdateProfileScreen = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const { user, loading, error } = useSelector((state: RootState) => state.auth);
+
   const [firstname, setFirstname] = useState(user?.userData?.firstname || '');
   const [lastname, setLastname] = useState(user?.userData?.lastname || '');
   const [mobile, setMobile] = useState(user?.userData?.mobile || '');
-  const router = useRouter();
 
   const handleUpdateProfile = async () => {
     try {
       const updatedData = { firstname, lastname, mobile };
-      const response = await updateUserProfile(updatedData);
-      // Cập nhật thông tin người dùng trong context
-      setUser((prevUser: any) => ({
-        ...prevUser,
-        userData: {
-          ...prevUser.userData,
-          firstname: response.data.firstname,
-          lastname: response.data.lastname,
-          mobile: response.data.mobile,
-        },
-      }));
+      await dispatch(updateProfile(updatedData)).unwrap();
       Alert.alert('Thông báo', 'Cập nhật thông tin thành công', [
         { text: 'OK', onPress: () => router.back() },
       ]);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      Alert.alert('Lỗi', 'Cập nhật thông tin thất bại');
+    } catch (err) {
+      Alert.alert('Lỗi', err as string || 'Cập nhật thông tin thất bại');
     }
   };
 
-  return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.select({ ios: 'padding' })}>
-      <View style={styles.form}>
-        <Text style={styles.title}>Cập nhật thông tin</Text>
-        <TextInput
-          placeholder="Họ"
-          value={firstname}
-          onChangeText={setFirstname}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Tên"
-          value={lastname}
-          onChangeText={setLastname}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Số điện thoại"
-          value={mobile}
-          onChangeText={setMobile}
-          style={styles.input}
-          keyboardType="phone-pad"
-        />
-        <TouchableOpacity style={styles.updateButton} onPress={handleUpdateProfile}>
-          <Text style={styles.updateButtonText}>Cập nhật</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
-          <Text style={styles.cancelButtonText}>Hủy bỏ</Text>
-        </TouchableOpacity>
+  const handleLogout = () => {
+    dispatch(logout()).then(() => {
+      router.push('/auth/login');
+    });
+  };
+
+  if (!user) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Bạn cần đăng nhập để xem thông tin tài khoản.</Text>
       </View>
-    </KeyboardAvoidingView>
+    );
+  }
+
+  return (
+    <SafeAreaView className="flex-1">
+      <KeyboardAvoidingView className="flex-1 p-4" behavior={Platform.select({ ios: 'padding' })}>
+        <View>
+          <Text className="text-2xl font-bold mb-6 text-center">Cập nhật thông tin</Text>
+          <TextInput
+            placeholder="Họ"
+            value={firstname}
+            onChangeText={setFirstname}
+            className="h-12 border border-gray-300 mb-3 px-3 rounded-lg"
+          />
+          <TextInput
+            placeholder="Tên"
+            value={lastname}
+            onChangeText={setLastname}
+            className="h-12 border border-gray-300 mb-3 px-3 rounded-lg"
+          />
+          <TextInput
+            placeholder="Số điện thoại"
+            value={mobile}
+            onChangeText={setMobile}
+            className="h-12 border border-gray-300 mb-3 px-3 rounded-lg"
+            keyboardType="phone-pad"
+          />
+        </View>
+        <View>
+          <TouchableOpacity
+            className="bg-blue-500 py-3 rounded-lg items-center mt-2"
+            onPress={handleUpdateProfile}
+            disabled={loading}
+          >
+            <Text className="text-white text-lg">Cập nhật</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="bg-red-600 py-3 rounded-lg mt-4 items-center"
+            onPress={handleLogout}
+          >
+            <Text className="text-white text-base">Đăng xuất</Text>
+          </TouchableOpacity>
+          {error && <Text className="text-red-500 mt-2 text-center">{error}</Text>}
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 export default UpdateProfileScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  form: {
-    marginTop: 32,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 24,
-    alignSelf: 'center',
-  },
-  input: {
-    height: 48,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  updateButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  updateButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  cancelButton: {
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  cancelButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-  },
-});

@@ -1,23 +1,24 @@
 // app/(tabs)/_layout.tsx
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Tabs, Redirect } from 'expo-router';
-import React, { useContext } from 'react';
 
-import { TabBarIcon } from '../../components/navigation/TabBarIcon'; // Điều chỉnh đường dẫn import nếu cần
-import { Colors } from '../../constants/Colors'; // Điều chỉnh đường dẫn import nếu cần
-import { useColorScheme } from '../../hooks/useColorScheme'; // Điều chỉnh đường dẫn import nếu cần
-import { AuthContext } from '../../contexts/AuthContext';
+import { TabBarIcon } from '../../components/navigation/TabBarIcon';
+import { Colors } from '../../constants/Colors';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import { RootState } from '../../store';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { isAuthenticated, loading } = useContext(AuthContext);
+  const { isAuthenticated, loading } = useSelector((state: RootState) => state.auth);
 
   if (loading) {
-    // Hiển thị màn hình chờ hoặc gì đó khi đang tải trạng thái xác thực
+    // You can render a loading spinner or any placeholder here
     return null;
   }
 
   if (!isAuthenticated) {
-    // Nếu chưa đăng nhập, điều hướng đến trang đăng nhập
+    // If the user is not authenticated, redirect to the login screen
     return <Redirect href="/auth/login" />;
   }
 

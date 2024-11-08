@@ -1,127 +1,60 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Button, ActivityIndicator } from 'react-native';
-import { AuthContext } from '../../contexts/AuthContext';
+import React from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, Platform, StatusBar } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../store/authSlice';
 import { useRouter } from 'expo-router';
-import { getOrderHistory } from '../../services/api/userService';
+import { RootState, AppDispatch } from '../../store';
 
 const AccountScreen = () => {
-  const { user, logout } = useContext(AuthContext);
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const [orderHistory, setOrderHistory] = useState([]);
-  const [loadingOrders, setLoadingOrders] = useState(true);
-
-  useEffect(() => {
-    // Gọi API để lấy lịch sử đơn hàng
-    const fetchOrderHistory = async () => {
-      try {
-        const response = await getOrderHistory();
-        setOrderHistory(response.data.orders);
-      } catch (error) {
-        console.error('Error fetching order history:', error);
-      } finally {
-        setLoadingOrders(false);
-      }
-    };
-
-    fetchOrderHistory();
-  }, []);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const handleUpdateProfile = () => {
     router.push('/user/update');
   };
 
+  const handleLogout = () => {
+    dispatch(logout()).then(() => {
+      router.push('/auth/login');
+    });
+  };
+
   if (!user) {
     return (
-      <View style={styles.centered}>
+      <View className="flex-1 justify-center items-center">
         <Text>Bạn cần đăng nhập để xem thông tin tài khoản.</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* Thông tin tài khoản */}
-      <View style={styles.profileContainer}>
-        <Text style={styles.name}>
-          {user.userData.firstname} {user.userData.lastname}
-        </Text>
-        <Text style={styles.email}>{user.userData.email}</Text>
-        <TouchableOpacity style={styles.updateButton} onPress={handleUpdateProfile}>
-          <Text style={styles.updateButtonText}>Cập nhật thông tin</Text>
-        </TouchableOpacity>
+    <SafeAreaView
+      style={{
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+      }}
+      className="flex-1 bg-white"
+    >
+      <View className="flex-1 p-4 justify-between">
+        <View>
+          <View className="items-center mb-4">
+            <Text className="text-lg font-bold">
+              Xin chào {user.userData.lastname} {user.userData.firstname}
+            </Text>
+          </View>
+          <TouchableOpacity onPress={handleUpdateProfile} className="py-3 border-b border-gray-300">
+            <Text className="text-base">Account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="py-3 border-b border-gray-300">
+            <Text className="text-base">Wishlist</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="py-3 border-b border-gray-300">
+            <Text className="text-base">Contact Us</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-     
-
-      {/* Nút đăng xuất */}
-      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-        <Text style={styles.logoutButtonText}>Đăng xuất</Text>
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default AccountScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  profileContainer: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  email: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 8,
-  },
-  updateButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  updateButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  orderHistoryContainer: {
-    flex: 1,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  orderItem: {
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    marginBottom: 12,
-  },
-  orderId: {
-    fontWeight: 'bold',
-  },
-  logoutButton: {
-    backgroundColor: '#FF3B30',
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  logoutButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-});
