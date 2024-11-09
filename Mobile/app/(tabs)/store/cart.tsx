@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store'; // Adjust the path based on your project structure
-import { fetchUserCart } from '../../../store/userSlice';
+import { fetchUserCart, deleteCartProductThunk, updateCartProductQuantity } from '../../../store/userSlice';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -38,7 +38,6 @@ const CartScreen: React.FC = () => {
     const [totalAmount, setTotalAmount] = useState<number>(0);
 
     const userCartState = useSelector((state: RootState) => state.user.cart);
-    const userToken = useSelector((state: RootState) => state.user.userData?.refreshToken);
 
     useEffect(() => {
         dispatch(fetchUserCart() as any);
@@ -52,45 +51,72 @@ const CartScreen: React.FC = () => {
         setTotalAmount(sum);
     }, [userCartState]);
 
-    const renderCartItem = ({ item }: { item: CartItem }) => (
-        <View className="flex-row bg-white mb-3 rounded-lg overflow-hidden shadow-md">
-            <Image
-                source={{ uri: item.productId.images[0].url }}
-                className="w-24 h-24"
-                resizeMode="cover"
-            />
-            <View className="flex-1 p-3 justify-between">
-                <View>
-                    <Text className="text-sm text-gray-500">{item.productId.brand}</Text>
-                    <Text className="text-base font-bold text-gray-800">{item.productId.title}</Text>
-                </View>
-                <View>
-                    <View className="flex-row items-center mt-1">
-                        <Text className="text-sm text-gray-600 w-24">Quantity:</Text>
-                        <Text className="text-sm text-gray-800">{item.quantity}</Text>
+    const handleDeleteProduct = (cartItemId: string) => {
+        dispatch(deleteCartProductThunk(cartItemId) as any);
+    };
+
+    const handleUpdateQuantity = (cartItemId: string, newQuantity: number) => {
+        if (newQuantity > 0) {
+            dispatch(updateCartProductQuantity({ cartItemId, newQuantity }) as any);
+        } else {
+            handleDeleteProduct(cartItemId);
+        }
+    };
+
+    const renderCartItem = ({ item }: { item: CartItem }) => {
+        if (!item.productId || !item.productId.images || !item.productId.images[0]) {
+            return null; // Skip rendering if essential data is missing
+        }
+
+        return (
+            <View className="flex-row bg-white mb-3 rounded-lg overflow-hidden shadow-md">
+                <Image
+                    source={{ uri: item.productId.images[0].url }}
+                    className="w-24 h-24"
+                    resizeMode="cover"
+                />
+                <View className="flex-1 p-3 justify-between">
+                    <View>
+                        <Text className="text-sm text-gray-500">{item.productId.brand}</Text>
+                        <Text className="text-base font-bold text-gray-800">{item.productId.title}</Text>
                     </View>
-                    <View className="flex-row items-center mt-1">
-                        <Text className="text-sm text-gray-600 w-24">Category:</Text>
-                        <Text className="text-sm text-gray-800">{item.productId.category}</Text>
+                    <View>
+                        <View className="flex-row items-center mt-1">
+                            <Text className="text-sm text-gray-600 w-24">Quantity:</Text>
+                            <Text className="text-sm text-gray-800">{item.quantity}</Text>
+                            <TouchableOpacity onPress={() => handleUpdateQuantity(item._id, item.quantity + 1)}>
+                                <Ionicons name="add-circle-outline" size={20} color="#1e90ff" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => handleUpdateQuantity(item._id, item.quantity - 1)}>
+                                <Ionicons name="remove-circle-outline" size={20} color="#1e90ff" />
+                            </TouchableOpacity>
+                        </View>
+                        <View className="flex-row items-center mt-1">
+                            <Text className="text-sm text-gray-600 w-24">Category:</Text>
+                            <Text className="text-sm text-gray-800">{item.productId.category}</Text>
+                        </View>
+                        <View className="flex-row items-center mt-1">
+                            <Text className="text-sm text-gray-600 w-24">Color:</Text>
+                            <View
+                                className="w-4 h-4 rounded-full border border-gray-300 ml-2"
+                                style={{ backgroundColor: item.color.title || '#000' }}
+                            />
+                        </View>
+                        <View className="flex-row items-center mt-1">
+                            <Text className="text-sm text-gray-600 w-24">Available Stock:</Text>
+                            <Text className="text-sm text-gray-800">{item.productId.quantity}</Text>
+                        </View>
                     </View>
-                    <View className="flex-row items-center mt-1">
-                        <Text className="text-sm text-gray-600 w-24">Color:</Text>
-                        <View
-                            className="w-4 h-4 rounded-full border border-gray-300 ml-2"
-                            style={{ backgroundColor: item.color.title || '#000' }}
-                        />
+                    <View className="mt-2">
+                        <Text className="text-lg font-bold text-gray-800">Rs. {item.quantity * item.price}</Text>
                     </View>
-                    <View className="flex-row items-center mt-1">
-                        <Text className="text-sm text-gray-600 w-24">Available Stock:</Text>
-                        <Text className="text-sm text-gray-800">{item.productId.quantity}</Text>
-                    </View>
-                </View>
-                <View className="mt-2">
-                    <Text className="text-lg font-bold text-gray-800">Rs. {item.quantity * item.price}</Text>
+                    <TouchableOpacity onPress={() => handleDeleteProduct(item._id)}>
+                        <Ionicons name="trash-outline" size={24} color="red" />
+                    </TouchableOpacity>
                 </View>
             </View>
-        </View>
-    );
+        );
+    };
 
     const ListHeader = () => (
         <View className="mb-4">
@@ -128,7 +154,12 @@ const CartScreen: React.FC = () => {
             renderItem={renderCartItem}
             keyExtractor={(item) => item._id}
             ListHeaderComponent={ListHeader}
-            ListFooterComponent={ListFooter}
+            ListFooterComponent={userCartState.length > 0 ? ListFooter : null}
+            ListEmptyComponent={() => (
+                <View className="flex-1 justify-center items-center">
+                    <Text className="text-lg text-gray-500">Your cart is empty</Text>
+                </View>
+            )}
             contentContainerStyle={{ paddingBottom: 20 }}
         />
     );

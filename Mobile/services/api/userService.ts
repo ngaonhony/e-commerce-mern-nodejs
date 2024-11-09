@@ -12,4 +12,5 @@ export const deleteCartProduct = (cartItemId: string) =>
     apiClient.delete(`/api/user/delete-product-cart/${cartItemId}`);
 
 export const updateCartProduct = (cartItemId: string, newQuantity: number) =>
-    apiClient.put(`/api/user/update-product-cart/${cartItemId}/${newQuantity}`);
+    apiClient.delete(`/api/user/update-product-cart/${cartItemId}/${newQuantity}`);
+

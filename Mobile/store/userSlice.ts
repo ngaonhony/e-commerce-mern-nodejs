@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { updateUserProfile, getOrderHistory, getUserWishlist, getUserCart } from '../services/api/userService';
+import { updateUserProfile, getOrderHistory, getUserWishlist, getUserCart, deleteCartProduct as apiDeleteCartProduct, updateCartProduct } from '../services/api/userService';
 
 // Định nghĩa các giao diện nếu chưa được định nghĩa
 interface Image {
@@ -169,6 +169,28 @@ export const fetchUserCart = createAsyncThunk(
   }
 );
 
+// Async thunk to delete a product from the cart
+export const deleteCartProductThunk = createAsyncThunk(
+  'user/deleteCartProduct',
+  async (cartItemId: string, { rejectWithValue }) => {
+    try {
+      await apiDeleteCartProduct(cartItemId);
+      return cartItemId;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete product from cart');
+    }
+  }
+);
+
+// Async thunk to update product quantity in the cart
+export const updateCartProductQuantity = createAsyncThunk(
+  'user/updateCartProductQuantity',
+  async ({ cartItemId, newQuantity }: { cartItemId: string; newQuantity: number }) => {
+    const response = await updateCartProduct(cartItemId, newQuantity);
+    return { cartItemId, newQuantity };
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState, // Sử dụng initialState đã định nghĩa
@@ -207,6 +229,36 @@ const userSlice = createSlice({
       .addCase(fetchUserCart.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch cart';
+      })
+      // Handle deleteCartProductThunk
+      .addCase(deleteCartProductThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteCartProductThunk.fulfilled, (state, action: PayloadAction<string>) => {
+        state.cart = state.cart.filter(item => item._id !== action.payload);
+        state.loading = false;
+      })
+      .addCase(deleteCartProductThunk.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to delete product from cart';
+      })
+      // Handle updateCartProductQuantity
+      .addCase(updateCartProductQuantity.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateCartProductQuantity.fulfilled, (state, action) => {
+        const { cartItemId, newQuantity } = action.payload;
+        const item = state.cart.find((item) => item._id === cartItemId);
+        if (item) {
+          item.quantity = newQuantity;
+        }
+        state.loading = false;
+      })
+      .addCase(updateCartProductQuantity.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to update product quantity';
       });
   },
 });
