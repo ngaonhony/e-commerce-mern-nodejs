@@ -1,23 +1,23 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, Platform, StatusBar } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../store/authSlice';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
-import { RootState, AppDispatch } from '../../store';
+import { RootState } from '../../../store';
 
 const AccountScreen = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
 
   const handleUpdateProfile = () => {
-    router.push('/user/update');
+    router.push('/(tabs)/account/update'); // Đường dẫn tương đối
   };
 
-  const handleLogout = () => {
-    dispatch(logout()).then(() => {
-      router.push('/auth/login');
-    });
+  const handleContact = () => {
+    router.push('/(tabs)/account/contact'); // Đường dẫn tuyệt đối nhưng vẫn trong tab
+  };
+
+  const handleWishlist = () => {
+    router.push('/(tabs)/account/wishlist'); // Cập nhật đường dẫn nếu cần thiết
   };
 
   if (!user) {
@@ -45,10 +45,10 @@ const AccountScreen = () => {
           <TouchableOpacity onPress={handleUpdateProfile} className="py-3 border-b border-gray-300">
             <Text className="text-base">Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="py-3 border-b border-gray-300">
+          <TouchableOpacity onPress={handleWishlist} className="py-3 border-b border-gray-300">
             <Text className="text-base">Wishlist</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="py-3 border-b border-gray-300">
+          <TouchableOpacity onPress={handleContact} className="py-3 border-b border-gray-300">
             <Text className="text-base">Contact Us</Text>
           </TouchableOpacity>
         </View>
