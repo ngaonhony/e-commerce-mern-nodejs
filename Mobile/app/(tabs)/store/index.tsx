@@ -17,6 +17,7 @@ import { fetchProducts } from '../../../store/productSlice';
 import { RootState, AppDispatch } from '../../../store';
 import RNPickerSelect from 'react-native-picker-select';
 import { useNavigation } from '@react-navigation/native';
+import { router } from 'expo-router';
 
 interface Product {
   _id: string;
@@ -170,6 +171,10 @@ const StoreScreen = () => {
     </TouchableOpacity>
   );
 
+  const handleCart = () => {
+    router.push('/(tabs)/store/cart');
+  };
+
   return (
     <View className="flex-1 bg-gray-100 p-4">
       {/* Header */}
@@ -244,7 +249,7 @@ const StoreScreen = () => {
 
       {/* Floating Cart Button */}
       <TouchableOpacity className="absolute w-16 h-16 p-4 items-center justify-center bg-red-500 rounded-full right-5 bottom-5 shadow-lg">
-        <Ionicons name="cart" size={30} color="#fff" />
+        <Ionicons onPress={handleCart} name="cart" size={30} color="#fff" />
       </TouchableOpacity>
 
       {/* Filter Modal */}
