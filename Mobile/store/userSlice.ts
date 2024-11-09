@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { updateUserProfile, getOrderHistory, getUserWishlist } from '../services/api/userService';
+import { updateUserProfile, getOrderHistory, getUserWishlist, getUserCart } from '../services/api/userService';
 
 // Định nghĩa các giao diện nếu chưa được định nghĩa
 interface Image {
@@ -73,9 +73,30 @@ interface UserData {
   refreshToken: string;
 }
 
+interface Color {
+  _id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+interface CartItem {
+  _id: string;
+  userId: string;
+  productId: Product;
+  quantity: number;
+  price: number;
+  color: Color;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 interface UserState {
   userData: UserData | null;
   wishlist: WishlistItem[];
+  cart: CartItem[];
   loading: boolean;
   error: string | null;
 }
@@ -84,6 +105,7 @@ interface UserState {
 const initialState: UserState = {
   userData: null,
   wishlist: [],
+  cart: [],
   loading: false,
   error: null,
 };
@@ -134,6 +156,19 @@ export const fetchUserWishlist = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch user cart
+export const fetchUserCart = createAsyncThunk(
+  'user/fetchUserCart',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getUserCart();
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch cart');
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState, // Sử dụng initialState đã định nghĩa
@@ -160,6 +195,18 @@ const userSlice = createSlice({
       .addCase(fetchUserWishlist.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch wishlist';
+      })
+      .addCase(fetchUserCart.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserCart.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+        state.cart = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchUserCart.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch cart';
       });
   },
 });
