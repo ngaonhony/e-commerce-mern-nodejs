@@ -20,6 +20,10 @@ const AccountScreen = () => {
     router.push('/(tabs)/account/wishlist');
   };
 
+  const handleOrderHistory = () => {
+    router.push('/(tabs)/account/order');
+  };
+
   if (!user) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -42,6 +46,9 @@ const AccountScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity onPress={handleWishlist} className="py-3 border-b border-gray-300">
           <Text className="text-base">Wishlist</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleOrderHistory} className="py-3 border-b border-gray-300">
+          <Text className="text-base">Order History</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleContact} className="py-3 border-b border-gray-300">
           <Text className="text-base">Contact Us</Text>
