@@ -39,7 +39,7 @@ interface PaymentInfo {
 }
 
 interface OrderItem {
-  product: string;
+  product: Product; 
   color: string;
   quantity: number;
   price: number;
