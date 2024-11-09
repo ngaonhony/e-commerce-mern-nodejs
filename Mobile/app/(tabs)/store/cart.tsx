@@ -55,9 +55,11 @@ const CartScreen: React.FC = () => {
         dispatch(deleteCartProductThunk(cartItemId) as any);
     };
 
-    const handleUpdateQuantity = (cartItemId: string, newQuantity: number) => {
-        if (newQuantity > 0) {
+    const handleUpdateQuantity = (cartItemId: string, newQuantity: number, availableStock: number) => {
+        if (newQuantity > 0 && newQuantity <= availableStock) {
             dispatch(updateCartProductQuantity({ cartItemId, newQuantity }) as any);
+        } else if (newQuantity > availableStock) {
+            alert('Quantity exceeds available stock');
         } else {
             handleDeleteProduct(cartItemId);
         }
@@ -65,7 +67,7 @@ const CartScreen: React.FC = () => {
 
     const renderCartItem = ({ item }: { item: CartItem }) => {
         if (!item.productId || !item.productId.images || !item.productId.images[0]) {
-            return null; // Skip rendering if essential data is missing
+            return null;
         }
 
         return (
@@ -84,10 +86,10 @@ const CartScreen: React.FC = () => {
                         <View className="flex-row items-center mt-1">
                             <Text className="text-sm text-gray-600 w-24">Quantity:</Text>
                             <Text className="text-sm text-gray-800">{item.quantity}</Text>
-                            <TouchableOpacity onPress={() => handleUpdateQuantity(item._id, item.quantity + 1)}>
+                            <TouchableOpacity onPress={() => handleUpdateQuantity(item._id, item.quantity + 1, item.productId.quantity)}>
                                 <Ionicons name="add-circle-outline" size={20} color="#1e90ff" />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => handleUpdateQuantity(item._id, item.quantity - 1)}>
+                            <TouchableOpacity onPress={() => handleUpdateQuantity(item._id, item.quantity - 1, item.productId.quantity)}>
                                 <Ionicons name="remove-circle-outline" size={20} color="#1e90ff" />
                             </TouchableOpacity>
                         </View>
@@ -140,7 +142,7 @@ const CartScreen: React.FC = () => {
             </Text>
             <TouchableOpacity
                 className="bg-blue-500 py-3 rounded-lg items-center"
-                // onPress={() => navigation.navigate('Checkout')}
+            // onPress={() => navigation.navigate('Checkout')}
             >
                 <Text className="text-white text-lg font-bold">Checkout</Text>
             </TouchableOpacity>
