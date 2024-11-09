@@ -1,19 +1,35 @@
+// src/store/productSlice.ts
+
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import {
-  getProducts,
-  getAllpCategory,
-} from '../services/api/productService';
+import { getProducts } from '../services/api/productService';
+
+export interface Product {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  price: number;
+  category: string;
+  brand: string;
+  quantity: number;
+  sold: number;
+  images: { public_id: string; url: string; _id: string }[];
+  color: string[];
+  tags: string[]; // Changed from 'string' to 'string[]'
+  totalrating: number;
+  ratings: { star: number; comment: string; postedby: string; _id: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface ProductState {
-  products: any[];
-  categories: any[]; 
+  products: Product[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: ProductState = {
   products: [],
-  categories: [],
   loading: false,
   error: null,
 };
@@ -24,19 +40,6 @@ export const fetchProducts = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await getProducts();
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-// Async thunk to fetch categories
-export const fetchCategories = createAsyncThunk(
-  'product/fetchCategories',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await getAllpCategory();
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);
@@ -57,26 +60,13 @@ const productSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<any[]>) => {
+      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
         state.products = action.payload;
         state.loading = false;
       })
       .addCase(fetchProducts.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch products';
-      })
-      // Handle fetchCategories
-      .addCase(fetchCategories.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchCategories.fulfilled, (state, action: PayloadAction<any[]>) => {
-        state.categories = action.payload; // Store categories in state
-        state.loading = false;
-      })
-      .addCase(fetchCategories.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload || 'Failed to fetch categories';
       });
   },
 });
