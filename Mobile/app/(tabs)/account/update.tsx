@@ -3,7 +3,8 @@ import { View, TextInput, Alert, Text, TouchableOpacity, KeyboardAvoidingView, P
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 import { RootState, AppDispatch } from '../../../store';
-import { updateProfile, logout } from '../../../store/authSlice';
+import { logout } from '../../../store/authSlice';
+import { updateProfile } from '../../../store/userSlice';
 
 const UpdateProfileScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
