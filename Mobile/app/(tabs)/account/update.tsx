@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, TextInput, Alert, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, TextInput, Alert, Text, TouchableOpacity, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
-import { RootState, AppDispatch } from '../../store';
-import { updateProfile, logout } from '../../store/authSlice';
+import { RootState, AppDispatch } from '../../../store';
+import { logout } from '../../../store/authSlice';
+import { updateProfile } from '../../../store/userSlice';
 
 const UpdateProfileScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -44,7 +44,10 @@ const UpdateProfileScreen = () => {
   return (
     <SafeAreaView className="flex-1">
       <KeyboardAvoidingView className="flex-1 p-4" behavior={Platform.select({ ios: 'padding' })}>
-        <View>
+        <View className="mb-4">
+          <TouchableOpacity onPress={() => router.back()} className="mb-4">
+            <Text className="text-blue-500">Trở về</Text>
+          </TouchableOpacity>
           <Text className="text-2xl font-bold mb-6 text-center">Cập nhật thông tin</Text>
           <TextInput
             placeholder="Họ"

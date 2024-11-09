@@ -9,7 +9,6 @@ interface UserData {
   lastname: string;
   mobile: string;
   email: string;
-  // Add other necessary fields
 }
 
 interface AuthState {
@@ -108,28 +107,6 @@ export const loadUser = createAsyncThunk(
   }
 );
 
-// Async thunk for updating user profile
-export const updateProfile = createAsyncThunk(
-  'auth/updateProfile',
-  async (
-    updatedData: Partial<UserData>,
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await updateUserProfile(updatedData);
-      const updatedUser: UserData = response.data;
-
-      // Update AsyncStorage
-      const token = (await AsyncStorage.getItem('token')) || '';
-      await AsyncStorage.setItem('customer', JSON.stringify(updatedUser));
-
-      return { token, userData: updatedUser };
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Update failed');
-    }
-  }
-);
-
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -202,25 +179,6 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
     });
-
-    // Handle updateProfile
-    builder
-      .addCase(updateProfile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        updateProfile.fulfilled,
-        (state, action: PayloadAction<{ token: string; userData: UserData }>) => {
-          state.user = action.payload;
-          state.isAuthenticated = true;
-          state.loading = false;
-        }
-      )
-      .addCase(updateProfile.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload || 'Update failed';
-      });
   },
 });
 

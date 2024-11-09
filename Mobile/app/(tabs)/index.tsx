@@ -6,7 +6,7 @@ import { RootState } from '../../store';
 
 export default function HomeScreen() {
   const dispatch = useDispatch();
-  const { products, loading, error } = useSelector((state: RootState) => state.product);
+  const { loading, error } = useSelector((state: RootState) => state.product);
 
   useEffect(() => {
     dispatch(fetchProducts() as any);
