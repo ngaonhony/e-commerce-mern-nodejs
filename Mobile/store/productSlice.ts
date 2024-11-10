@@ -1,8 +1,29 @@
+// src/store/productSlice.ts
+
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getProducts } from '../services/api/productService';
 
+export interface Product {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  price: number;
+  category: string;
+  brand: string;
+  quantity: number;
+  sold: number;
+  images: { public_id: string; url: string; _id: string }[];
+  color: string[];
+  tags: string[]; // Changed from 'string' to 'string[]'
+  totalrating: number;
+  ratings: { star: number; comment: string; postedby: string; _id: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface ProductState {
-  products: any[];
+  products: Product[];
   loading: boolean;
   error: string | null;
 }
@@ -39,7 +60,7 @@ const productSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<any[]>) => {
+      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
         state.products = action.payload;
         state.loading = false;
       })
