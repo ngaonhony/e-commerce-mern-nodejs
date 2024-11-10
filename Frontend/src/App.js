@@ -29,6 +29,7 @@ import PaymentButton from "./components/PaymentButton";
 import PaymentResult from "./components/PaymentResult";
 import ZaloPayButton from "./components/ZaloPayButton";
 import ZaloPayResult from "./components/ZaloPayResult";
+import MoMoPaymentButton from "./components/MomoButton"; // MoMo
 
 function App() {
   return (
@@ -110,6 +111,7 @@ function App() {
             <Route path="/payment-result" element={<PaymentResult />} />
             <Route path="/zaloPay" element={<ZaloPayButton />} />
             <Route path="/zaloPay-result" element={<ZaloPayResult />} />
+            <Route path="/MoMo" element={<MoMoPaymentButton />} />
           </Route>
         </Routes>
       </BrowserRouter>

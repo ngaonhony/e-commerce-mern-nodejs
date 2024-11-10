@@ -4,6 +4,7 @@ const moment = require("moment");
 const qs = require("qs");
 const ZaloPay = require("../models/zaloPayModel");
 
+
 const config = {
   app_id: "2553",
   key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
@@ -15,7 +16,7 @@ const payment = async (req, res) => {
   const { amount, bankCode } = req.body;
 
   const embed_data = {
-    redirecturl: "https://f131-1-52-0-187.ngrok-free.app/callback",
+    redirecturl: "https://f131-1-52-0-187.ngrok-free.app/views/home.html",
   }; // Sau khi thanh toán xong sẽ chuyển hướng về địa chỉ này
   const items = [];
   const transID = Math.floor(Math.random() * 1000000);

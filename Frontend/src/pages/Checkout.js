@@ -382,6 +382,14 @@ const Checkout = () => {
                     Pay ZaloPay $ {totalAmount ? totalAmount + 0 : "0"}
                   </Link>
                 </div>
+                <div className="w-100">
+                  <Link
+                    to="/MoMo"
+                    className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center"
+                  >
+                    Pay MOMO $ {totalAmount ? totalAmount + 0 : "0"}
+                  </Link>
+                </div>
 
                 <div className="w-100">
                   <div className="d-flex justify-content-between align-items-center">

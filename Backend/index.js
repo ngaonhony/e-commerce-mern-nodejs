@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv").config();
 const PORT = 5000;
+const config = require("./config/config.js");
+app.use(express.static('./public'));
+
 
 // Middleware imports
 const bodyParser = require("body-parser");
@@ -13,6 +16,7 @@ const axios = require("axios").default;
 const CryptoJS = require("crypto-js");
 const moment = require("moment");
 const qs = require("qs");
+const crypto = require("crypto");
 
 // Config and middleware setup
 const dbConnect = require("./config/dbConnect");
@@ -43,6 +47,7 @@ const couponRouter = require("./routes/couponRoute");
 const uploadRouter = require("./routes/uploadRoute");
 const orderRouter = require("./routes/order");
 const zaloPayRouter = require("./routes/zaloPayRoute");
+const momoRouter = require("./routes/momoRoute");
 
 // Firebase setup
 const admin = require("firebase-admin");
@@ -67,6 +72,8 @@ app.use("/api/enquiry", enqRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/zaloPay", zaloPayRouter);
+app.use("/api/momo", momoRouter);
+
 
 // Error handling middleware
 app.use(notFound);
