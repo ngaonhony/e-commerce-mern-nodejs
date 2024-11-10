@@ -7,12 +7,20 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import { config } from "../utils/axiosConfig";
+import { FaApple } from "react-icons/fa";
 import {
   createAnOrder,
   deleteUserCart,
   getUserCart,
   resetState,
 } from "../features/user/userSlice";
+
+import {
+  GoogleMap,
+  useJsApiLoader,
+  StandaloneSearchBox,
+} from "@react-google-maps/api";
+import { useRef } from "react";
 
 let shippingSchema = yup.object({
   firstname: yup.string().required("First Name is Required"),
@@ -192,71 +200,107 @@ const Checkout = () => {
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+
+  const libraries = ["places"];
+  const inputref = useRef(null);
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
+
+  // console.log(isLoaded)
+
+  const handelOnPlacesChanged = () => {
+    let address = inputref.current.getPlaces();
+    if (address && address.length > 0) {
+      const place = address[0];
+      formik.setFieldValue("address", place.formatted_address); // Cập nhật địa chỉ
+      formik.setFieldValue(
+        "city",
+        place.address_components.find((comp) => comp.types.includes("locality"))
+          ?.long_name || ""
+      ); // Cập nhật thành phố
+      formik.setFieldValue(
+        "state",
+        place.address_components.find((comp) =>
+          comp.types.includes("administrative_area_level_1")
+        )?.long_name || ""
+      ); // Cập nhật bang
+      formik.setFieldValue(
+        "country",
+        place.address_components.find((comp) => comp.types.includes("country"))
+          ?.long_name || ""
+      ); // Cập nhật quốc gia
+      formik.setFieldValue(
+        "pincode",
+        place.address_components.find((comp) =>
+          comp.types.includes("postal_code")
+        )?.long_name || ""
+      ); // Cập nhật mã bưu điện
+    }
+  };
+
   return (
     <>
       <Container class1="checkout-wrapper py-5 home-wrapper-2">
-        <div className="row">
-          <div className="col-7">
-            <div className="checkout-left-data">
-              <h3 className="website-name">Cart Corner</h3>
-              <nav
-                style={{ "--bs-breadcrumb-divider": ">" }}
-                aria-label="breadcrumb"
-              >
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <Link className="text-dark total-price" to="/cart">
-                      Cart
-                    </Link>
-                  </li>
-                  &nbsp; /&nbsp;
-                  <li
-                    className="breadcrumb-ite total-price active"
-                    aria-current="page"
-                  >
-                    Information
-                  </li>
-                  &nbsp; /
-                  <li className="breadcrumb-item total-price active">
-                    Shipping
-                  </li>
-                  &nbsp; /
-                  <li
-                    className="breadcrumb-item total-price active"
-                    aria-current="page"
-                  >
-                    Payment
-                  </li>
-                </ol>
-              </nav>
-              <h4 className="title total">Contact Information</h4>
-              <p className="user-details total">
-                Dev Jariwala (devjariwala8444@gmail.com)
-              </p>
-              <h4 className="mb-3">Shipping Address</h4>
+        <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-x-8">
+          <div className=" bg-white h-full p-4 rounded-lg mb-2 ">
+            <div className="border-bottom py-4 h-full flex flex-col">
+              {cartState &&
+                cartState?.map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="d-flex gap-10 mb-2 align-align-items-center flex-1 justify-between items-center p-2"
+                    >
+                      <div className=" d-flex gap-10 h-full flex-1 items-center">
+                        <div className="position-relative ">
+                          <span
+                            style={{ top: "-10px", right: "2px" }}
+                            className="badge bg-secondary text-white rounded-circle p-2 position-absolute"
+                          >
+                            {item?.quantity}
+                          </span>
+                          <img
+                            className="!h-[150px] !w-[150px] object-cover max-w-full"
+                            src={item?.productId?.images[0]?.url}
+                            alt="product"
+                          />
+                        </div>
+                        <div>
+                          <h5 className="total-price">
+                            {item?.productId?.title}
+                          </h5>
+                          <p
+                            className="total-price rounded-full"
+                            style={{
+                              backgroundColor: item?.color?.title,
+                              height: 20,
+                              width: 20,
+                              margin: 70,
+                            }}
+                          ></p>
+                        </div>
+                      </div>
+                      <div className="">
+                        <h5 className="total">
+                          Rs. {item?.price * item?.quantity}
+                        </h5>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+
+          <div className=" bg-white p-4 rounded-lg">
+            <div className="checkout-left-data w-200 mb-10">
               <form
                 onSubmit={formik.handleSubmit}
                 action=""
                 className="d-flex gap-15 flex-wrap justify-content-between"
               >
-                <div className="w-100">
-                  <select
-                    className="form-control form-select"
-                    id=""
-                    name="country"
-                    value={formik.values.country}
-                    onChange={formik.handleChange("country")}
-                    onBlur={formik.handleChange("country")}
-                  >
-                    <option value="" selected disabled>
-                      Select Country
-                    </option>
-                    <option value="India">India</option>
-                  </select>
-                  <div className="error ms-2 my-1">
-                    {formik.touched.country && formik.errors.country}
-                  </div>
-                </div>
                 <div className="flex-grow-1">
                   <input
                     type="text"
@@ -286,60 +330,24 @@ const Checkout = () => {
                   </div>
                 </div>
                 <div className="w-100">
-                  <input
-                    type="text"
-                    placeholder="Address"
-                    className="form-control"
-                    name="address"
-                    value={formik.values.address}
-                    onChange={formik.handleChange("address")}
-                    onBlur={formik.handleBlur("address")}
-                  />
+                  {isLoaded && (
+                    <StandaloneSearchBox
+                      onLoad={(ref) => (inputref.current = ref)}
+                      onPlacesChanged={handelOnPlacesChanged}
+                    >
+                      <input
+                        type="text"
+                        placeholder="Address"
+                        className="form-control"
+                        name="address"
+                        value={formik.values.address}
+                        onChange={formik.handleChange("address")}
+                        onBlur={formik.handleBlur("address")}
+                      />
+                    </StandaloneSearchBox>
+                  )}
                   <div className="error ms-2 my-1">
                     {formik.touched.address && formik.errors.address}
-                  </div>
-                </div>
-                <div className="w-100">
-                  <input
-                    type="text"
-                    placeholder="Apartment, Suite ,etc"
-                    className="form-control"
-                    name="other"
-                    value={formik.values.other}
-                    onChange={formik.handleChange("other")}
-                    onBlur={formik.handleBlur("other")}
-                  />
-                </div>
-                <div className="flex-grow-1">
-                  <input
-                    type="text"
-                    placeholder="City"
-                    className="form-control"
-                    name="city"
-                    value={formik.values.city}
-                    onChange={formik.handleChange("city")}
-                    onBlur={formik.handleBlur("city")}
-                  />
-                  <div className="error ms-2 my-1">
-                    {formik.touched.city && formik.errors.city}
-                  </div>
-                </div>
-                <div className="flex-grow-1">
-                  <select
-                    className="form-control form-select"
-                    id=""
-                    name="state"
-                    value={formik.values.state}
-                    onChange={formik.handleChange("state")}
-                    onBlur={formik.handleChange("state")}
-                  >
-                    <option value="" selected disabled>
-                      Select State
-                    </option>
-                    <option value="Gujarat">Gujarat</option>
-                  </select>
-                  <div className="error ms-2 my-1">
-                    {formik.touched.state && formik.errors.state}
                   </div>
                 </div>
                 <div className="flex-grow-1">
@@ -356,14 +364,21 @@ const Checkout = () => {
                     {formik.touched.pincode && formik.errors.pincode}
                   </div>
                 </div>
+
+                <div className="w-100">
+                  <Link
+                    to="/Payment"
+                    className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center"
+                  >
+                    Pay VNPay $ {totalAmount ? totalAmount + 0 : "0"}
+                  </Link>
+                </div>
+
                 <div className="w-100">
                   <div className="d-flex justify-content-between align-items-center">
                     <Link to="/cart" className="text-dark">
                       <BiArrowBack className="me-2" />
                       Return to Cart
-                    </Link>
-                    <Link to="/cart" className="button">
-                      Continue to Shipping
                     </Link>
                     <button className="button" type="submit">
                       Place Order
@@ -371,65 +386,6 @@ const Checkout = () => {
                   </div>
                 </div>
               </form>
-            </div>
-          </div>
-          <div className="col-5">
-            <div className="border-bottom py-4">
-              {cartState &&
-                cartState?.map((item, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="d-flex gap-10 mb-2 align-align-items-center"
-                    >
-                      <div className="w-75 d-flex gap-10">
-                        <div className="w-25 position-relative">
-                          <span
-                            style={{ top: "-10px", right: "2px" }}
-                            className="badge bg-secondary text-white rounded-circle p-2 position-absolute"
-                          >
-                            {item?.quantity}
-                          </span>
-                          <img
-                            src={item?.productId?.images[0]?.url}
-                            width={100}
-                            height={100}
-                            alt="product"
-                          />
-                        </div>
-                        <div>
-                          <h5 className="total-price">
-                            {item?.productId?.title}
-                          </h5>
-                          <p className="total-price">{item?.color?.title}</p>
-                        </div>
-                      </div>
-                      <div className="flex-grow-1">
-                        <h5 className="total">
-                          Rs. {item?.price * item?.quantity}
-                        </h5>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-            <div className="border-bottom py-4">
-              <div className="d-flex justify-content-between align-items-center">
-                <p className="total">Subtotal</p>
-                <p className="total-price">
-                  Rs. {totalAmount ? totalAmount : "0"}
-                </p>
-              </div>
-              <div className="d-flex justify-content-between align-items-center">
-                <p className="mb-0 total">Shipping</p>
-                <p className="mb-0 total-price">Rs. 100</p>
-              </div>
-            </div>
-            <div className="d-flex justify-content-between align-items-center border-bootom py-4">
-              <h4 className="total">Total</h4>
-              <h5 className="total-price">
-                Rs. {totalAmount ? totalAmount + 100 : "0"}
-              </h5>
             </div>
           </div>
         </div>
