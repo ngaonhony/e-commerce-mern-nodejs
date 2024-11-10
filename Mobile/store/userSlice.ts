@@ -39,7 +39,7 @@ interface PaymentInfo {
 }
 
 interface OrderItem {
-  product: Product; 
+  product: Product;
   color: string;
   quantity: number;
   price: number;
@@ -206,9 +206,17 @@ export const deleteCartProductThunk = createAsyncThunk(
 
 export const updateCartProductQuantity = createAsyncThunk(
   'user/updateCartProductQuantity',
-  async ({ cartItemId, newQuantity }: { cartItemId: string; newQuantity: number }) => {
-    const response = await updateCartProduct(cartItemId, newQuantity);
-    return { cartItemId, newQuantity };
+  async (
+    { cartItemId, newQuantity }: { cartItemId: string; newQuantity: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      await updateCartProduct(cartItemId, newQuantity);
+      // Return cartItemId and newQuantity directly
+      return { cartItemId, newQuantity };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update product quantity');
+    }
   }
 );
 
@@ -276,7 +284,7 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateCartProductQuantity.fulfilled, (state, action) => {
+      .addCase(updateCartProductQuantity.fulfilled, (state, action: PayloadAction<{ cartItemId: string; newQuantity: number }>) => {
         const { cartItemId, newQuantity } = action.payload;
         const item = state.cart.find((item) => item._id === cartItemId);
         if (item) {
