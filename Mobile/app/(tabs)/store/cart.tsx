@@ -7,6 +7,7 @@ import {
     Image,
     FlatList,
     TouchableOpacity,
+    Alert,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store'; // Adjust the path based on your project structure
@@ -59,7 +60,7 @@ const CartScreen: React.FC = () => {
         if (newQuantity > 0 && newQuantity <= availableStock) {
             dispatch(updateCartProductQuantity({ cartItemId, newQuantity }) as any);
         } else if (newQuantity > availableStock) {
-            alert('Quantity exceeds available stock');
+            Alert.alert('Quantity exceeds available stock');
         } else {
             handleDeleteProduct(cartItemId);
         }
@@ -85,7 +86,7 @@ const CartScreen: React.FC = () => {
                     <View>
                         <View className="flex-row items-center mt-1">
                             <Text className="text-sm text-gray-600 w-24">Quantity:</Text>
-                            <Text className="text-sm text-gray-800">{item.quantity}</Text>
+                            <Text className="text-sm text-gray-800 mr-2">{item.quantity}</Text>
                             <TouchableOpacity onPress={() => handleUpdateQuantity(item._id, item.quantity + 1, item.productId.quantity)}>
                                 <Ionicons name="add-circle-outline" size={20} color="#1e90ff" />
                             </TouchableOpacity>
@@ -142,7 +143,7 @@ const CartScreen: React.FC = () => {
             </Text>
             <TouchableOpacity
                 className="bg-blue-500 py-3 rounded-lg items-center"
-            // onPress={() => navigation.navigate('Checkout')}
+                // onPress={() => navigation.navigate('Checkout')}
             >
                 <Text className="text-white text-lg font-bold">Checkout</Text>
             </TouchableOpacity>

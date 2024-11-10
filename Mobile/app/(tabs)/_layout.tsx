@@ -7,6 +7,9 @@ import { TabBarIcon } from '../../components/navigation/TabBarIcon';
 import { Colors } from '../../constants/Colors';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { RootState } from '../../store';
+import { StatusBar } from 'react-native';
+import { Platform } from 'react-native';
+import { SafeAreaView } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -23,48 +26,55 @@ export default function TabLayout() {
   }
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+    <SafeAreaView
+      style={{
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
       }}
+      className="flex-1 bg-white"
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+          headerShown: false,
         }}
-      />
-      <Tabs.Screen
-        name="store"
-        options={{
-          title: 'Store',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'cart' : 'cart-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="blog"
-        options={{
-          title: 'Blog',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="account"
-        options={{
-          title: 'Account',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="store"
+          options={{
+            title: 'Store',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'cart' : 'cart-outline'} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="blog"
+          options={{
+            title: 'Blog',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="account"
+          options={{
+            title: 'Account',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+    </SafeAreaView>
   );
 }

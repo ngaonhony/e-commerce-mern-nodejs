@@ -157,7 +157,7 @@ const StoreScreen = () => {
   const renderProduct = ({ item }: { item: Product }) => (
     <TouchableOpacity
       className="flex-1 bg-white m-2 p-4 rounded-lg shadow"
-      // onPress={() => navigation.navigate('ProductDetail', { productId: item._id })}
+      onPress={() => router.push(`/store/product/${item._id}`)}
     >
       <Image
         source={{ uri: item.images[0]?.url }}
