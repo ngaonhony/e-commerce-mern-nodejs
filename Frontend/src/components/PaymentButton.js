@@ -7,7 +7,7 @@ const PaymentButton = () => {
     const paymentData = {
       orderId: "12345",
       amount: 100000,
-      bankCode: "VNBANK",
+      bankCode: "",
       language: "vn",
     };
 

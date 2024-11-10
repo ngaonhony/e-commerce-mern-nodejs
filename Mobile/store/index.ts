@@ -6,6 +6,8 @@ import productReducer from './productSlice';
 import enquiryReducer from './enquirySlice';
 import userReducer from './userSlice';
 import brandReducer from './brandSlice';
+import blogReducer from './blogSlice';
+
 // Import other reducers as needed
 
 const store = configureStore({
@@ -15,6 +17,7 @@ const store = configureStore({
     enquiry: enquiryReducer,
     user: userReducer,
     brand: brandReducer,
+    blog: blogReducer,
     // Add other reducers here
   },
   middleware: (getDefaultMiddleware) =>
