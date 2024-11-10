@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../../store/productSlice';
 import { RootState } from '../../store';
+import Banner1 from '@/components/Banner1';
 
 export default function HomeScreen() {
   const dispatch = useDispatch();
@@ -14,7 +15,7 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View className="flex-1 justify-center items-center">
         <Text>Loading products...</Text>
       </View>
     );
@@ -22,28 +23,15 @@ export default function HomeScreen() {
 
   if (error) {
     return (
-      <View style={styles.container}>
+      <View className="flex-1 justify-center items-center">
         <Text>Error fetching products: {error}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Home Screen</Text>
-      {/* Render products here */}
+    <View >
+      <Banner1 />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-});
