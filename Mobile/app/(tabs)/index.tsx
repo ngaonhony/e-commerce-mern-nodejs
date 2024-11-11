@@ -1,17 +1,22 @@
+// app/tabs/HomeScreen.tsx
+
 import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../../store/productSlice';
-import { RootState } from '../../store';
+import { RootState, AppDispatch } from '../../store';
 import Banner1 from '@/components/Banner1';
+import ProductGrid from '@/components/ProductGrid';
 
 export default function HomeScreen() {
-  const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: RootState) => state.product);
+  const dispatch: AppDispatch = useDispatch();
+  const { products, loading, error } = useSelector((state: RootState) => state.product);
 
   useEffect(() => {
-    dispatch(fetchProducts() as any);
-  }, [dispatch]);
+    if (products.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products]);
 
   if (loading) {
     return (
@@ -30,8 +35,10 @@ export default function HomeScreen() {
   }
 
   return (
-    <View >
-      <Banner1 />
-    </View>
+    <ScrollView className='bg-white'>
+      <Banner1></Banner1>
+      <ProductGrid tag="feature" title="Featured Products" />
+      <ProductGrid tag="popular" title="Popular Products" />
+    </ScrollView>
   );
 }

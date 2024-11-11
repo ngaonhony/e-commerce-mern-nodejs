@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { getAllProducts } from "../features/products/productSlice";
 import { useNavigate } from "react-router-dom";
 import ReactStars from "react-rating-stars-component";
-import wish from "../images/wish.svg";
 import { addToWishlist } from "../features/products/productSlice";
 
 const ProductGrid = ({ tag, title }) => {

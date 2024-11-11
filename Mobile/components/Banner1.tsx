@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 
 const Banner1: React.FC = () => {
     return (
-        <View className=" bg-gray-900 flex-col justify-between p-4">
+        <View className=" bg-gray-900 flex-col justify-between p-4 mb-3">
             <View className="flex-1 justify-center items-center">
                 <Image
                     source={{ uri: "https://i.ibb.co/YQjkqWr/juan-burgos-FIy-XGZ1q0mc-unsplash-1.png" }}
