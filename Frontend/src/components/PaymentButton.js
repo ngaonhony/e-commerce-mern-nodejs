@@ -31,13 +31,3 @@ const PaymentButton = () => {
 
 export default PaymentButton;
 
-// try {
-//   const response = await axios.post(
-//     "http://localhost:5000/api/order/create_payment_url",
-//     { amount, orderId, bankCode, language }
-//   );
-//   window.location.href = paymentUrl; // Client tự thực hiện chuyển hướng
-// } catch (error) {
-//   console.error("Payment Error:", error);
-//   alert("Có lỗi xảy ra khi tạo URL thanh toán.");
-// }
