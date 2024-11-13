@@ -26,9 +26,9 @@ let shippingSchema = yup.object({
   firstname: yup.string().required("First Name is Required"),
   lastname: yup.string().required("Last Name is Required"),
   address: yup.string().required("Address Details are Required"),
-  state: yup.string().required("S tate is Required"),
-  city: yup.string().required("city is Required"),
-  country: yup.string().required("country is Required"),
+  state: yup.string(),
+  city: yup.string(),
+  country: yup.string(),
   pincode: yup.number("Pincode No is Required").required().positive().integer(),
 });
 
@@ -85,11 +85,11 @@ const Checkout = () => {
       firstname: "",
       lastname: "",
       address: "",
-      state: "",
-      city: "",
-      country: "",
+      // state: "",
+      // city: "",
+      // country: "",
       pincode: "",
-      other: "",
+      // other: "",
     },
     validationSchema: shippingSchema,
     onSubmit: (values) => {
