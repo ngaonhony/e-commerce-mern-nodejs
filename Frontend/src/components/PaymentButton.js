@@ -2,13 +2,10 @@
 import React from "react";
 import axios from "axios";
 
-const PaymentButton = () => {
+const PaymentButton = ({ amount }) => {
   const handlePayment = async () => {
     const paymentData = {
-      orderId: "12345",
-      amount: 100000,
-      bankCode: "",
-      language: "vn",
+      amount: amount,
     };
 
     try {
@@ -26,7 +23,11 @@ const PaymentButton = () => {
     }
   };
 
-  return <button onClick={handlePayment}>Thanh Toán VNPAY</button>;
+  return (
+    <button onClick={handlePayment} className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center">
+      Thanh Toán VNPAY {amount ? amount + 0 : "0"}
+    </button>
+  );
 };
 
 export default PaymentButton;

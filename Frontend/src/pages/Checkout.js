@@ -7,7 +7,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import { config } from "../utils/axiosConfig";
-import { FaApple } from "react-icons/fa";
+import PaymentButton from "../components/PaymentButton";
 import {
   createAnOrder,
   deleteUserCart,
@@ -366,12 +366,7 @@ const Checkout = () => {
                 </div>
 
                 <div className="w-100">
-                  <Link
-                    to="/Payment"
-                    className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center"
-                  >
-                    Pay VNPay $ {totalAmount ? totalAmount + 0 : "0"}
-                  </Link>
+                  <PaymentButton amount={totalAmount} />
                 </div>
 
                 <div className="w-100">
