@@ -29,102 +29,95 @@ const Orders = () => {
   return (
     <>
       <BreadCrumb title="My Orders" />
-      <Container class1="cart-wrapper home-wrapper-2 py-5">
+      <Container className="cart-wrapper home-wrapper-2 py-5">
         <div className="row">
-          <div className="col-12">
-            <div className="row">
-              <div className="col-3">
-                <h5>Order Id</h5>
-              </div>
-              <div className="col-3">
-                <h5>Total Amount</h5>
-              </div>
-              <div className="col-3">
-                <h5>Total Amount after Discount</h5>
-              </div>
-              <div className="col-3">
-                <h5>Status</h5>
-              </div>
-            </div>
-
-            <div className="col-12  mt-3">
-              {orderState &&
-                orderState?.map((item, index) => {
-                  return (
-                    <div
-                      style={{ backgroundColor: "#febd69" }}
-                      className="row pt-3 my-3"
-                      key={index}
-                    >
-                      <div className="col-3">
-                        <p>{item?._id}</p>
-                      </div>
-                      <div className="col-3">
-                        <p>{item?.totalPrice}</p>
-                      </div>
-                      <div className="col-3">
-                        <p>{item?.totalPriceAfterDiscount}</p>
-                      </div>
-                      <div className="col-3">
-                        <p>{item?.orderStatus}</p>
-                      </div>
-                      <div className="col-12">
-                        <div
-                          className="row py-3"
-                          style={{ backgroundColor: "#232f3e" }}
-                        >
-                          <div className="col-3">
-                            <h6 className="text-white">ProductName</h6>
-                          </div>
-                          <div className="col-3">
-                            <h6 className="text-white">Quantity</h6>
-                          </div>
-                          <div className="col-3">
-                            <h6 className="text-white">Price</h6>
-                          </div>
-                          <div className="col-3">
-                            <h6 className="text-white">Color</h6>
-                          </div>
-                          {item?.orderItems?.map((i, index) => {
-                            return (
-                              <div className="col-12">
-                                <div className="row py-3">
-                                  <div className="col-3">
-                                    <p className="text-white">
-                                      {i?.product?.title}
-                                    </p>
-                                  </div>
-                                  <div className="col-3">
-                                    <p className="text-white">{i?.quantity}</p>
-                                  </div>
-                                  <div className="col-3">
-                                    <p className="text-white">{i?.price}</p>
-                                  </div>
-                                  <div className="col-3">
-                                    <ul className="colors ps-0">
+          {orderState &&
+            orderState?.map((item, index) => {
+              return (
+                <div
+                  style={{ backgroundColor: "#FFFFFF" }}
+                  className="col-12"
+                  key={index}
+                >
+                  {/* Order Items and Order Information in One Row with Two Columns */}
+                  <div className="row">
+                    {/* Order Items Column (on the left) */}
+                    <div className="col-md-6 col-12">
+                      <h6 className="text-black font-bold p-2">Customer’s Cart</h6>
+                      {item?.orderItems?.map((i, idx) => {
+                        return (
+                          <div className="col-12" key={idx}>
+                            <div className="row py-3 align-items-center">
+                              <div className="col-6 d-flex align-items-center">
+                                {/* Product Image */}
+                                <img
+                                  src={i?.product?.images[0]?.url}
+                                  className="img-fluid rounded"
+                                  alt={i?.product?.title}
+                                  style={{
+                                    maxWidth: "100px",
+                                    height: "auto",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                                <div className="ml-3">
+                                  <h6 className="text-black font-semibold">
+                                    {i?.product?.title}
+                                  </h6>
+                                  <ul className="colors ps-0 mt-12">
+                                    {i?.color?.title && (
                                       <li
                                         style={{
                                           backgroundColor: i?.color.title,
                                         }}
+                                        className="w-6 h-6 rounded-full border"
                                       ></li>
-                                    </ul>
-                                  </div>
+                                    )}
+                                  </ul>
                                 </div>
                               </div>
-                            );
-                          })}
+  
+                              <div className="col-6 d-flex justify-content-between align-items-center">
+                                {/* Quantity and Price */}
+                                <p className="text-black mb-0">{i?.quantity}</p>
+                                <p className="text-black mb-0">Rs.{i?.price}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+  
+                    {/* Order Information Column (on the right) */}
+                    <div className="col-md-6 col-12">
+                      <div className="bg-gray-100 p-4 rounded-md h-full">
+                        <div className="d-flex justify-content-between py-2">
+                          <p className="font-bold">Order Id:</p>
+                          <p>{item?._id}</p>
+                        </div>
+                        <div className="d-flex justify-content-between py-2">
+                          <p className="font-bold">Total Amount:</p>
+                          <p>{item?.totalPrice}</p>
+                        </div>
+                        <div className="d-flex justify-content-between py-2">
+                          <p className="font-bold">Total Amount after Discount:</p>
+                          <p>{item?.totalPriceAfterDiscount}</p>
+                        </div>
+                        <div className="d-flex justify-content-between py-2">
+                          <p className="font-bold">Status:</p>
+                          <p>{item?.orderStatus}</p>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-            </div>
-          </div>
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </Container>
-      .
     </>
-  );
-};
+  ); 
+};  
+  
 
 export default Orders;
