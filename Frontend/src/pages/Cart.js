@@ -17,9 +17,8 @@ const Cart = () => {
     : null;
   const config2 = {
     headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
+      Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
+        }`,
       Accept: "application/json",
     },
   };
@@ -69,7 +68,7 @@ const Cart = () => {
                 userCartState.map((item, index) => (
                   <div
                     key={index}
-                    className="md:flex items-center mt-14 py-8 border-t border-gray-200"
+                    className="md:flex items-center mt-14 py-8 "
                   >
                     <div className="w-1/4">
                       <img
@@ -113,7 +112,7 @@ const Cart = () => {
                         <span
                           className="inline-block ml-2 w-4 h-4 rounded-full"
                           style={{
-                            backgroundColor: item?.color?.title || "#000", 
+                            backgroundColor: item?.color?.title || "#000",
                           }}
                           title={item?.color?.title}
                         ></span>
@@ -140,7 +139,7 @@ const Cart = () => {
                   </div>
                 ))}
             </div>
-            <div className="lg:w-2/5 w-full bg-gray-100 px-14 py-20">
+            <div className="lg:w-2/5 w-full bg-gray-50 px-14 py-20">
               <p className="text-4xl font-black leading-9 text-gray-800">
                 Summary
               </p>
