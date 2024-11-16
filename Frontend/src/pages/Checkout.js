@@ -8,6 +8,9 @@ import * as yup from "yup";
 import axios from "axios";
 import { config } from "../utils/axiosConfig";
 import PaymentButton from "../components/PaymentButton";
+import ZaloPayButton from "../components/ZaloPayButton";
+import MoMoPaymentButton from "../components/MomoButton";
+
 import {
   createAnOrder,
   deleteUserCart,
@@ -370,20 +373,11 @@ const Checkout = () => {
                 </div>
 
                 <div className="w-100">
-                  <Link
-                    to="/zaloPay"
-                    className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center"
-                  >
-                    Pay ZaloPay $ {totalAmount ? totalAmount + 0 : "0"}
-                  </Link>
+                  <ZaloPayButton amount={totalAmount} />
                 </div>
+
                 <div className="w-100">
-                  <Link
-                    to="/MoMo"
-                    className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center"
-                  >
-                    Pay MOMO $ {totalAmount ? totalAmount + 0 : "0"}
-                  </Link>
+                  <MoMoPaymentButton amount={totalAmount} />
                 </div>
 
                 <div className="w-100">
