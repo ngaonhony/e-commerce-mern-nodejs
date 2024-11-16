@@ -205,13 +205,6 @@ const ProductDetailScreen = () => {
     }
   };
 
-  const handleCopyLink = async () => {
-    if (product) {
-      await Clipboard.setStringAsync(`yourapp://product/${product._id}`);
-      Alert.alert('Success', 'Đã sao chép liên kết sản phẩm vào clipboard');
-    }
-  };
-
   useEffect(() => {
     const fetchPopularProducts = async () => {
       try {
@@ -400,11 +393,6 @@ const ProductDetailScreen = () => {
             <Text className="font-bold">5-10 ngày làm việc!</Text>
           </Text>
         </View>
-
-        {/* Product Link */}
-        <TouchableOpacity onPress={handleCopyLink} className="w-full mb-6">
-          <Text className="text-blue-500">Sao chép liên kết sản phẩm</Text>
-        </TouchableOpacity>
 
         {/* Description */}
         <View className="w-full mb-6">

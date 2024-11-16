@@ -11,9 +11,9 @@ const Banner1: React.FC = () => {
                     alt="image with decent chairs"
                 />
             </View>
-            <View className=" bg-gray-800 p-4 justify-center">
+            <View className=" bg-gray-500 p-4 justify-center">
                 <Text className="text-2xl font-bold text-white mb-2">Modern Interior Decor</Text>
-                <Text className="text-base text-gray-300 mb-4">
+                <Text className="text-base text-white mb-4">
                     Get inspired by our curated selection of luxiwood interiors. We hope get inspired to have luxiwood interior yourself. You’ll find tips here where you can buy a lot of cool furniture, decorations, plants, etc.
                 </Text>
                 <TouchableOpacity className="bg-white py-3 px-6 items-center rounded">
