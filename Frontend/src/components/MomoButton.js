@@ -2,13 +2,11 @@
 import React from "react";
 import axios from "axios";
 
-const MoMoPaymentButton = () => {
+const MoMoPaymentButton = ({ amount }) => {
   const handleMoMoPayment = async () => {
     const paymentData = {
-      amount: 100000, // Số tiền thanh toán
+      amount: amount,
     };
-
-    console.log("Payment Data:", paymentData); // In ra console để kiểm tra
 
     try {
       const response = await axios.post(
@@ -31,7 +29,11 @@ const MoMoPaymentButton = () => {
     }
   };
 
-  return <button onClick={handleMoMoPayment}>Thanh Toán MoMo</button>;
+  return (
+    <button onClick={handleMoMoPayment} className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center">
+      Thanh Toán MoMo {amount ? amount + 0 : "0"}
+    </button>
+  );
 };
 
 export default MoMoPaymentButton;

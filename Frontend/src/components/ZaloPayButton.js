@@ -2,12 +2,10 @@
 import React from "react";
 import axios from "axios";
 
-const ZaloPayButton = () => {
+const ZaloPayButton = ({ amount }) => {
   const handlePayment = async () => {
     const paymentData = {
-      amount: 50000, // Số tiền thanh toán
-      bankCode: "", // Mã ngân hàng (nếu cần)
-      language: "vn", // Ngôn ngữ
+      amount: amount,
     };
 
     try {
@@ -16,9 +14,7 @@ const ZaloPayButton = () => {
         "http://localhost:5000/api/zaloPay/payment", // Đường dẫn đến API ZaloPay
         paymentData
       );
-
       const orderUrl = response.data.order_url; // Nhận order_url từ backend
-
       // Chuyển hướng đến URL thanh toán của ZaloPay
       window.location.href = orderUrl;
     } catch (error) {
@@ -26,7 +22,11 @@ const ZaloPayButton = () => {
     }
   };
 
-  return <button onClick={handlePayment}>Thanh Toán ZaloPay</button>;
+  return (
+    <button onClick={handlePayment} className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center">
+      Thanh Toán ZaloPay {amount ? amount + 0 : "0"}
+    </button>
+  );
 };
 
 export default ZaloPayButton;
