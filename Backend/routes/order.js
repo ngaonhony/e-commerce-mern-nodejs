@@ -17,7 +17,7 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/create_payment_url", function (req, res, next) {
-  res.render("order", { title: "Tạo mới đơn hàng", amount: 10000 });
+  res.render("order", { title: "Tạo mới đơn hàng" });
 });
 
 router.get("/querydr", function (req, res, next) {
@@ -66,7 +66,7 @@ router.post("/create_payment_url", function (req, res, next) {
   vnp_Params["vnp_TxnRef"] = orderId;
   vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + orderId;
   vnp_Params["vnp_OrderType"] = "other";
-  vnp_Params["vnp_Amount"] = amount;
+  vnp_Params["vnp_Amount"] = amount * 1000;
   vnp_Params["vnp_ReturnUrl"] = returnUrl;
   vnp_Params["vnp_IpAddr"] = ipAddr;
   vnp_Params["vnp_CreateDate"] = createDate;
@@ -286,7 +286,7 @@ router.post("/refund", function (req, res, next) {
 
   let vnp_TxnRef = req.body.orderId;
   let vnp_TransactionDate = req.body.transDate;
-  let vnp_Amount = req.body.amount * 100;
+  let vnp_Amount = req.body.amount * 1000;
   let vnp_TransactionType = req.body.transType;
   let vnp_CreateBy = req.body.user;
 
