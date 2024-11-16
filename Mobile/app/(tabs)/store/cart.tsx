@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store'; // Adjust the path based on your project structure
-import { fetchUserCart, deleteCartProductThunk, updateCartProductQuantity } from '../../../store/userSlice';
+import { fetchUserCart, deleteCartProduct as deleteCartProductThunk, updateCartProductQuantity } from '../../../store/userSlice';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -143,7 +143,7 @@ const CartScreen: React.FC = () => {
             </Text>
             <TouchableOpacity
                 className="bg-blue-500 py-3 rounded-lg items-center"
-                // onPress={() => navigation.navigate('Checkout')}
+                onPress={() => navigation.navigate('checkout' as never)}
             >
                 <Text className="text-white text-lg font-bold">Checkout</Text>
             </TouchableOpacity>

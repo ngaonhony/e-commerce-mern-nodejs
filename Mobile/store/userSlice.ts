@@ -1,3 +1,5 @@
+// userSlice.ts
+
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -7,6 +9,8 @@ import {
   getUserCart,
   deleteCartProduct as apiDeleteCartProduct,
   updateCartProduct,
+  createOrder as apiCreateOrder,
+  emptyCart as apiEmptyCart,
 } from '../services/api/userService';
 
 // Interface definitions
@@ -21,42 +25,6 @@ interface Rating {
   comment: string;
   postedby: string;
   _id: string;
-}
-
-interface ShippingInfo {
-  firstname: string;
-  lastname: string;
-  address: string;
-  city: string;
-  state: string;
-  other?: string;
-  pincode: number;
-}
-
-interface PaymentInfo {
-  razorpayOrderId: string;
-  razorpayPaymentId: string;
-}
-
-interface OrderItem {
-  product: Product;
-  color: string;
-  quantity: number;
-  price: number;
-}
-
-export interface Order {
-  _id: string;
-  totalPrice: number;
-  orderStatus: string;
-  paidAt: string;
-  shippingInfo: ShippingInfo;
-  paymentInfo: PaymentInfo;
-  orderItems: OrderItem[];
-  month: number;
-  totalPriceAfterDiscount: number;
-  createdAt: string;
-  updatedAt: string;
 }
 
 interface Product {
@@ -79,26 +47,6 @@ interface Product {
   __v: number;
 }
 
-interface WishlistItem extends Product {}
-
-interface UserData {
-  _id: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  mobile: string;
-  password: string;
-  role: string;
-  isBlocked: boolean;
-  cart: any[];
-  wishlist: WishlistItem[];
-  orders: Order[];
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  refreshToken: string;
-}
-
 interface Color {
   _id: string;
   title: string;
@@ -119,6 +67,56 @@ interface CartItem {
   __v: number;
 }
 
+interface ShippingInfo {
+  firstname: string;
+  lastname: string;
+  address: string;
+  city?: string;
+  state?: string;
+  other?: string;
+  pincode: string;
+}
+
+interface OrderItem {
+  product: Product | string; // Could be product object or product ID
+  color: string;
+  quantity: number;
+  price: number;
+}
+
+export interface Order {
+  _id: string;
+  totalPrice: number;
+  orderStatus: string;
+  paidAt: string;
+  shippingInfo: ShippingInfo;
+  orderItems: OrderItem[];
+  month?: number;
+  totalPriceAfterDiscount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface WishlistItem extends Product {}
+
+interface UserData {
+  _id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  mobile: string;
+  password: string;
+  role: string;
+  isBlocked: boolean;
+  cart: any[];
+  wishlist: WishlistItem[];
+  orders: Order[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  refreshToken: string;
+}
+
 interface UserState {
   userData: UserData | null;
   wishlist: WishlistItem[];
@@ -126,6 +124,7 @@ interface UserState {
   orders: Order[];
   loading: boolean;
   error: string | null;
+  isSuccess: boolean;
 }
 
 // Initial state
@@ -136,6 +135,7 @@ const initialState: UserState = {
   orders: [],
   loading: false,
   error: null,
+  isSuccess: false,
 };
 
 // Async thunks
@@ -146,10 +146,10 @@ export const updateProfile = createAsyncThunk(
       const response = await updateUserProfile(updatedData);
       const updatedUser: UserData = response.data;
 
-      const token = (await AsyncStorage.getItem('token')) || '';
+      // Update AsyncStorage
       await AsyncStorage.setItem('customer', JSON.stringify(updatedUser));
 
-      return { token, userData: updatedUser };
+      return updatedUser;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Update failed');
     }
@@ -192,7 +192,7 @@ export const fetchUserCart = createAsyncThunk(
   }
 );
 
-export const deleteCartProductThunk = createAsyncThunk(
+export const deleteCartProduct = createAsyncThunk(
   'user/deleteCartProduct',
   async (cartItemId: string, { rejectWithValue }) => {
     try {
@@ -212,10 +212,34 @@ export const updateCartProductQuantity = createAsyncThunk(
   ) => {
     try {
       await updateCartProduct(cartItemId, newQuantity);
-      // Return cartItemId and newQuantity directly
       return { cartItemId, newQuantity };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update product quantity');
+    }
+  }
+);
+
+export const createOrder = createAsyncThunk(
+  'user/createOrder',
+  async (orderData: any, { rejectWithValue }) => {
+    try {
+      const response = await apiCreateOrder(orderData);
+      const data: { success: boolean; order: Order } = response.data;
+      return data.order;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to create order');
+    }
+  }
+);
+
+export const clearCart = createAsyncThunk(
+  'user/clearCart',
+  async (_, { rejectWithValue }) => {
+    try {
+      await apiEmptyCart();
+      return;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to clear cart');
     }
   }
 );
@@ -229,9 +253,27 @@ const userSlice = createSlice({
       state.userData = action.payload;
       state.wishlist = action.payload.wishlist;
     },
+    resetOrderState(state) {
+      state.isSuccess = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
+      // Update profile
+      .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action: PayloadAction<UserData>) => {
+        state.userData = action.payload;
+        state.loading = false;
+      })
+      .addCase(updateProfile.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to update profile';
+      })
+      // Fetch wishlist
       .addCase(fetchUserWishlist.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -244,11 +286,12 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload || 'Failed to fetch wishlist';
       })
+      // Fetch orders
       .addCase(fetchUserOrders.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchUserOrders.fulfilled, (state, action: PayloadAction<any[]>) => {
+      .addCase(fetchUserOrders.fulfilled, (state, action: PayloadAction<Order[]>) => {
         state.orders = action.payload;
         state.loading = false;
       })
@@ -256,6 +299,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload || 'Failed to fetch order history';
       })
+      // Fetch cart
       .addCase(fetchUserCart.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -268,36 +312,70 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload || 'Failed to fetch cart';
       })
-      .addCase(deleteCartProductThunk.pending, (state) => {
+      // Delete from cart
+      .addCase(deleteCartProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteCartProductThunk.fulfilled, (state, action: PayloadAction<string>) => {
+      .addCase(deleteCartProduct.fulfilled, (state, action: PayloadAction<string>) => {
         state.cart = state.cart.filter((item) => item._id !== action.payload);
         state.loading = false;
       })
-      .addCase(deleteCartProductThunk.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(deleteCartProduct.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload || 'Failed to delete product from cart';
       })
+      // Update cart product quantity
       .addCase(updateCartProductQuantity.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateCartProductQuantity.fulfilled, (state, action: PayloadAction<{ cartItemId: string; newQuantity: number }>) => {
-        const { cartItemId, newQuantity } = action.payload;
-        const item = state.cart.find((item) => item._id === cartItemId);
-        if (item) {
-          item.quantity = newQuantity;
+      .addCase(
+        updateCartProductQuantity.fulfilled,
+        (state, action: PayloadAction<{ cartItemId: string; newQuantity: number }>) => {
+          const { cartItemId, newQuantity } = action.payload;
+          const item = state.cart.find((item) => item._id === cartItemId);
+          if (item) {
+            item.quantity = newQuantity;
+          }
+          state.loading = false;
         }
-        state.loading = false;
-      })
+      )
       .addCase(updateCartProductQuantity.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload || 'Failed to update product quantity';
+      })
+      // Create order
+      .addCase(createOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.isSuccess = false;
+      })
+      .addCase(createOrder.fulfilled, (state, action: PayloadAction<Order>) => {
+        state.orders.push(action.payload);
+        state.loading = false;
+        state.isSuccess = true;
+      })
+      .addCase(createOrder.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to create order';
+        state.isSuccess = false;
+      })
+      // Clear cart
+      .addCase(clearCart.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(clearCart.fulfilled, (state) => {
+        state.cart = [];
+        state.loading = false;
+      })
+      .addCase(clearCart.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to clear cart';
       });
   },
 });
 
-export const { setUserData } = userSlice.actions;
+export const { setUserData, resetOrderState } = userSlice.actions;
 export default userSlice.reducer;
