@@ -40,11 +40,9 @@ var orderSchema = new mongoose.Schema(
     paymentInfo: {
       razorpayOrderId: {
         type: String,
-        required: true,
       },
       razorpayPaymentId: {
         type: String,
-        required: true,
       },
     },
     orderItems: [
@@ -83,7 +81,6 @@ var orderSchema = new mongoose.Schema(
     },
     totalPriceAfterDiscount: {
       type: Number,
-      required: true,
     },
     orderStatus: {
       type: String,

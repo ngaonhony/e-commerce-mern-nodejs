@@ -79,7 +79,7 @@ interface ShippingInfo {
 
 interface OrderItem {
   product: Product | string; // Could be product object or product ID
-  color: string;
+  color: Color;
   quantity: number;
   price: number;
 }

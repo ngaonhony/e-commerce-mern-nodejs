@@ -24,6 +24,7 @@ import {
   clearCart,
   resetOrderState,
 } from '../../../store/userSlice';
+import { useRouter } from 'expo-router';
 
 interface CartItem {
   _id: string;
@@ -39,6 +40,7 @@ interface CartItem {
   quantity: number;
   price: number;
   color: {
+    _id: string;
     title: string;
   };
 }
@@ -61,6 +63,7 @@ const CheckoutScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const [totalAmount, setTotalAmount] = useState<number>(0);
+  const router = useRouter();
 
   const userCartState = useAppSelector((state: RootState) => state.user.cart);
   const userState = useAppSelector((state: RootState) => state.user);
@@ -81,11 +84,14 @@ const CheckoutScreen: React.FC = () => {
     if (userState.isSuccess) {
       dispatch(clearCart());
       dispatch(resetOrderState());
-      // Notify the user and navigate as needed
       Alert.alert('Order placed successfully');
-      navigation.navigate('Home' as never); // Adjust navigation as per your app structure
+      router.push('/'); // Navigate to the home screen
     }
-  }, [userState.isSuccess, navigation, dispatch]);
+    if (userState.error) {
+      Alert.alert('Order creation failed');
+      dispatch(resetOrderState());
+    }
+  }, [userState.isSuccess, userState.error, dispatch, router]);
 
   const formik = useFormik<ShippingInfo>({
     initialValues: {
@@ -104,7 +110,7 @@ const CheckoutScreen: React.FC = () => {
     const orderItems = userCartState.map((item: CartItem) => ({
       product: item.productId._id,
       quantity: item.quantity,
-      color: item.color.title,
+      color: item.color._id,
       price: item.price,
     }));
 

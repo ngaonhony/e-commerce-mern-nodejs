@@ -496,7 +496,11 @@ const createOrder = asyncHandler(async (req, res) => {
       success: true,
     });
   } catch (error) {
-    throw new Error(error);
+    console.error('Error creating order:', error.message);
+    res.status(500).json({
+      message: 'Failed to create order',
+      error: error.message,
+    });
   }
 });
 
