@@ -162,7 +162,7 @@ const Cart = () => {
           ) : (
             <div className="text-center py-20">
               <p className="text-2xl font-bold text-gray-800">Your cart is empty</p>
-              <Link to="/store" className="button mt-5">
+              <Link to="/product" className="button mt-5">
                 Back to Store
               </Link>
             </div>
