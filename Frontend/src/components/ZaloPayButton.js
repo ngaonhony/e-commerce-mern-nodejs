@@ -23,7 +23,7 @@ const ZaloPayButton = ({ amount }) => {
   };
 
   return (
-    <button onClick={handlePayment} className="button w-full text-center mt-10 !rounded-none text-white py-2 flex items-center justify-center">
+    <button onClick={handlePayment} className="button w-full text-center !rounded-none text-white py-2 flex items-center justify-center">
       Thanh Toán ZaloPay {amount ? amount + 0 : "0"}
     </button>
   );

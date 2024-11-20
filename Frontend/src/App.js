@@ -25,11 +25,6 @@ import { PrivateRoutes } from "./routing/PrivateRoutes";
 import { OpenRoutes } from "./routing/OpenRoutes";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
-import PaymentButton from "./components/PaymentButton";
-import PaymentResult from "./components/PaymentResult";
-import ZaloPayButton from "./components/ZaloPayButton";
-import ZaloPayResult from "./components/ZaloPayResult";
-import MoMoPaymentButton from "./components/MomoButton"; // MoMo
 
 function App() {
   return (
@@ -107,11 +102,6 @@ function App() {
             <Route path="refund-policy" element={<RefundPloicy />} />
             <Route path="shipping-policy" element={<ShippingPolicy />} />
             <Route path="term-conditions" element={<TermAndContions />} />
-            <Route path="/payment" element={<PaymentButton />} />
-            <Route path="/payment-result" element={<PaymentResult />} />
-            <Route path="/zaloPay" element={<ZaloPayButton />} />
-            <Route path="/zaloPay-result" element={<ZaloPayResult />} />
-            <Route path="/MoMo" element={<MoMoPaymentButton />} />
           </Route>
         </Routes>
       </BrowserRouter>

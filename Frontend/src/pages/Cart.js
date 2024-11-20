@@ -17,9 +17,8 @@ const Cart = () => {
     : null;
   const config2 = {
     headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
+      Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
+        }`,
       Accept: "application/json",
     },
   };
@@ -28,11 +27,6 @@ const Cart = () => {
   const [totalAmount, setTotalAmount] = useState(null);
   const userCartState = useSelector((state) => state.auth.cartProducts);
 
-  // Fetch cart data when the component mounts
-  useEffect(() => {
-    dispatch(getUserCart(config2));
-  }, [dispatch, config2]);
-
   useEffect(() => {
     if (productupdateDetail !== null) {
       dispatch(
@@ -40,16 +34,18 @@ const Cart = () => {
           cartItemId: productupdateDetail?.cartItemId,
           quantity: productupdateDetail?.quantity,
         })
-      ).then(() => {
+      );
+      setTimeout(() => {
         dispatch(getUserCart(config2));
-      });
+      }, 200);
     }
-  }, [productupdateDetail, dispatch, config2]);
+  }, [productupdateDetail]);
 
   const deleteACartProduct = (id) => {
-    dispatch(deleteCartProduct({ id: id, config2: config2 })).then(() => {
+    dispatch(deleteCartProduct({ id: id, config2: config2 }));
+    setTimeout(() => {
       dispatch(getUserCart(config2));
-    });
+    }, 200);
   };
 
   useEffect(() => {
@@ -148,9 +144,7 @@ const Cart = () => {
                   Summary
                 </p>
                 <div className="flex items-center justify-between pt-16">
-                  <p className="text-base leading-none text-gray-800">
-                    Subtotal
-                  </p>
+                  <p className="text-base leading-none text-gray-800">Subtotal</p>
                   <p className="text-base leading-none text-gray-800">
                     Rs. {totalAmount ?? 0}
                   </p>
@@ -167,9 +161,7 @@ const Cart = () => {
             </div>
           ) : (
             <div className="text-center py-20">
-              <p className="text-2xl font-bold text-gray-800">
-                Your cart is empty
-              </p>
+              <p className="text-2xl font-bold text-gray-800">Your cart is empty</p>
               <Link to="/product" className="button mt-5">
                 Back to Store
               </Link>

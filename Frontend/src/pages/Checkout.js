@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BiArrowBack } from "react-icons/bi";
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import { config } from "../utils/axiosConfig";
-import PaymentButton from "../components/PaymentButton";
+import VNPayButton from "../components/VNPayButton";
 import ZaloPayButton from "../components/ZaloPayButton";
 import MoMoPaymentButton from "../components/MomoButton";
+import RazorpayButton from "../components/RazorpayButton";
 
 import {
   createAnOrder,
@@ -19,11 +19,9 @@ import {
 } from "../features/user/userSlice";
 
 import {
-  GoogleMap,
   useJsApiLoader,
   StandaloneSearchBox,
 } from "@react-google-maps/api";
-import { useRef } from "react";
 
 let shippingSchema = yup.object({
   firstname: yup.string().required("First Name is Required"),
@@ -61,9 +59,8 @@ const Checkout = () => {
 
   const config2 = {
     headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
+      Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
+        }`,
       Accept: "application/json",
     },
   };
@@ -129,7 +126,7 @@ const Checkout = () => {
       });
     }
     setCartProductState(items);
-  }, []);
+  }, [cartState]);
 
   const checkOutHandler = async () => {
     const res = await loadScript(
@@ -298,7 +295,7 @@ const Checkout = () => {
           </div>
 
           <div className=" bg-white p-4 rounded-lg">
-            <div className="checkout-left-data w-200 mb-10">
+            <div className="checkout-left-data w-full">
               <form
                 onSubmit={formik.handleSubmit}
                 action=""
@@ -368,27 +365,25 @@ const Checkout = () => {
                   </div>
                 </div>
 
-                <div className="w-100">
-                  <PaymentButton amount={totalAmount} />
-                </div>
+                <div className="flex flex-col gap-4 md:flex-row ">
+                  <div className="w-full">
+                    <VNPayButton amount={totalAmount} />
+                  </div>
 
-                <div className="w-100">
-                  <ZaloPayButton amount={totalAmount} />
-                </div>
+                  <div className="w-100">
+                    <ZaloPayButton amount={totalAmount} />
+                  </div>
 
-                <div className="w-100">
-                  <MoMoPaymentButton amount={totalAmount} />
-                </div>
+                  <div className="w-100">
+                    <MoMoPaymentButton amount={totalAmount} />
+                  </div>
 
-                <div className="w-100">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Link to="/cart" className="text-dark">
-                      <BiArrowBack className="me-2" />
-                      Return to Cart
-                    </Link>
-                    <button className="button" type="submit">
-                      Place Order
-                    </button>
+                  <div className="w-100">
+                    <RazorpayButton
+                      totalAmount={totalAmount}
+                      cartProductState={cartProductState}
+                      config2={config2}
+                    />
                   </div>
                 </div>
               </form>
