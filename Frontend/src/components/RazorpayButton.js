@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { createAnOrder, deleteUserCart, resetState } from "../features/user/userSlice";
+import RazorPayLogo from "../assets/images/razorpay-logo.png";
 
 const RazorpayButton = ({ totalAmount, cartProductState, config2 }) => {
   const dispatch = useDispatch();
@@ -94,8 +95,12 @@ const RazorpayButton = ({ totalAmount, cartProductState, config2 }) => {
   return (
     <button
       onClick={checkOutHandler}
-      className="button w-full text-center !rounded-none text-white py-2 flex items-center justify-center"
+      className="button w-full md:w-50 bg-gray-500 hover:bg-gray-600 text-center !rounded-none text-white py-2 flex items-center justify-center"
     >
+    <img
+      src={RazorPayLogo}
+      alt="Razorpay Logo" 
+      className="mr-2" />
       RazorPay {totalAmount ? totalAmount + 0 : "0"}
     </button>
   );

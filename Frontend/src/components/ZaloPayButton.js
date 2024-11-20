@@ -1,6 +1,7 @@
 // frontend/src/components/ZaloPayButton.js
 import React from "react";
 import axios from "axios";
+import ZaloPay from "../assets/images/zalopay-logo.png";
 
 const ZaloPayButton = ({ amount }) => {
   const handlePayment = async () => {
@@ -23,7 +24,11 @@ const ZaloPayButton = ({ amount }) => {
   };
 
   return (
-    <button onClick={handlePayment} className="button w-full text-center !rounded-none text-white py-2 flex items-center justify-center">
+    <button onClick={handlePayment} className="button w-full bg-gray-500 hover:bg-gray-600 text-center !rounded-none text-white py-2 flex items-center justify-center">
+     <img 
+     src={ZaloPay} 
+     alt="VNPay Logo" 
+     className="mr-2" />
       Thanh Toán ZaloPay {amount ? amount + 0 : "0"}
     </button>
   );

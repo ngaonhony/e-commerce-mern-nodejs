@@ -1,6 +1,7 @@
 // frontend/src/components/MoMoPaymentButton.js
 import React from "react";
 import axios from "axios";
+import MoMoLogo from "../assets/images/momo-logo.png";
 
 const MoMoPaymentButton = ({ amount }) => {
   const handleMoMoPayment = async () => {
@@ -30,7 +31,8 @@ const MoMoPaymentButton = ({ amount }) => {
   };
 
   return (
-    <button onClick={handleMoMoPayment} className="button w-full text-center !rounded-none text-white py-2 flex items-center justify-center">
+    <button onClick={handleMoMoPayment} className="button w-full bg-gray-500 hover:bg-gray-600 text-center !rounded-none text-white py-2 flex items-center justify-center">
+    <img src={MoMoLogo} alt="MoMo Logo" className="mr-2" />
       Thanh Toán MoMo {amount ? amount + 0 : "0"}
     </button>
   );

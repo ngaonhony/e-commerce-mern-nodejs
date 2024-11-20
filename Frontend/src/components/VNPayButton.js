@@ -23,8 +23,11 @@ const VNPayButton = ({ amount }) => {
   };
 
   return (
-    <button onClick={handlePayment} className=" bg-gray-500 hover:bg-gray-600 transition-all duration-300 w-full text-center !rounded-none text-white py-2 flex items-center justify-center">
-      <img src={VNPayLogo} alt="VNPay Logo" className="mr-2" />
+    <button onClick={handlePayment} className="button bg-gray-500 hover:bg-gray-600 transition-all duration-300 w-full text-center !rounded-none text-white py-2 flex items-center justify-center">
+      <img 
+      src={VNPayLogo} 
+      alt="VNPay Logo" 
+      className="mr-2"/>
       {amount ? amount.toLocaleString() : "0"}
     </button>
   );
