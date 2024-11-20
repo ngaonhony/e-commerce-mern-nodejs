@@ -365,27 +365,30 @@ const Checkout = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4 md:flex-row ">
-                  <div className="w-full">
-                    <VNPayButton amount={totalAmount} />
-                  </div>
+                {formik.isValid && formik.dirty && (
+                  <div className="flex flex-col gap-4 md:flex-row ">
+                    <div className="w-full">
+                      <VNPayButton amount={totalAmount} />
+                    </div>
 
-                  <div className="w-100">
-                    <ZaloPayButton amount={totalAmount} />
-                  </div>
+                    <div className="w-100">
+                      <ZaloPayButton amount={totalAmount} />
+                    </div>
 
-                  <div className="w-100">
-                    <MoMoPaymentButton amount={totalAmount} />
-                  </div>
+                    <div className="w-100">
+                      <MoMoPaymentButton amount={totalAmount} />
+                    </div>
 
-                  <div className="w-100">
-                    <RazorpayButton
-                      totalAmount={totalAmount}
-                      cartProductState={cartProductState}
-                      config2={config2}
-                    />
+                    <div className="w-100">
+                      <RazorpayButton
+                        totalAmount={totalAmount}
+                        cartProductState={cartProductState}
+                        config2={config2}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
+
               </form>
             </div>
           </div>
