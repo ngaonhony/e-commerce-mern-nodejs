@@ -1,22 +1,12 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv").config();
-const PORT = 5000;
-const config = require("./config/config.js");
-app.use(express.static('./public'));
-
+const PORT = process.env.PORT || 5000;
 
 // Middleware imports
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-const path = require("path");
-const axios = require("axios").default;
-const CryptoJS = require("crypto-js");
-const moment = require("moment");
-const qs = require("qs");
-const crypto = require("crypto");
 
 // Config and middleware setup
 const dbConnect = require("./config/dbConnect");
@@ -27,7 +17,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
