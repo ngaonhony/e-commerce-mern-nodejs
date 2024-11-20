@@ -1,5 +1,3 @@
-// SingleProduct.js
-
 import React, { useEffect, useState } from "react";
 import ReactStars from "react-rating-stars-component";
 import BreadCrumb from "../components/BreadCrumb";
@@ -20,7 +18,7 @@ import { addProdToCart, getUserCart } from "../features/user/userSlice";
 import Color from "../components/Color";
 
 const SingleProduct = () => {
-  const [color, setColor] = useState(null); // Selected color ID
+  const [color, setColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [alreadyAdded, setAlreadyAdded] = useState(false);
   const location = useLocation();
@@ -60,10 +58,8 @@ const SingleProduct = () => {
     }
   }, [wishlistState, getProductId, userState]);
 
-  // Set default color to the first color in the array when productState changes
   useEffect(() => {
     if (productState && productState.color && productState.color.length > 0) {
-      // If color is not already set (e.g., when product changes), set it to the first color's _id
       if (!color) {
         setColor(productState.color[0]._id);
       }
@@ -103,16 +99,14 @@ const SingleProduct = () => {
       toast.error("Please write a review about the product");
       return;
     }
-    dispatch(addRating({ star, comment, prodId: getProductId }));
-    setTimeout(() => {
+    dispatch(addRating({ star, comment, prodId: getProductId })).then(() => {
       dispatch(getAProduct(getProductId));
       // Reset review form
       setStar(null);
       setComment("");
-    }, 100);
+    });
   };
 
-  // State for toggling review details
   const [expandedReviews, setExpandedReviews] = useState({});
 
   const toggleReview = (index) => {
@@ -219,7 +213,7 @@ const SingleProduct = () => {
                       <Color
                         setColor={setColor}
                         colorData={productState?.color}
-                        selectedColor={color} // Pass the selected color ID
+                        selectedColor={color}
                       />
                     </div>
                   )}
@@ -254,7 +248,7 @@ const SingleProduct = () => {
                       onClick={() => {
                         alreadyAdded ? navigate("/cart") : uploadCart();
                       }}
-                      disabled={productState?.quantity === 0} // Disable button if out of stock
+                      disabled={productState?.quantity === 0}
                     >
                       {alreadyAdded ? "Go to Cart" : "Add to Cart"}
                     </button>
