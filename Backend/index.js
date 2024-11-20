@@ -35,7 +35,7 @@ const colorRouter = require("./routes/colorRoute");
 const enqRouter = require("./routes/enqRoute");
 const couponRouter = require("./routes/couponRoute");
 const uploadRouter = require("./routes/uploadRoute");
-const orderRouter = require("./routes/order");
+const vnPayRouter = require("./routes/vnPayRoute");
 const zaloPayRouter = require("./routes/zaloPayRoute");
 const momoRouter = require("./routes/momoRoute");
 
@@ -60,7 +60,7 @@ app.use("/api/coupon", couponRouter);
 app.use("/api/color", colorRouter);
 app.use("/api/enquiry", enqRouter);
 app.use("/api/upload", uploadRouter);
-app.use("/api/order", orderRouter);
+app.use("/api/order", vnPayRouter);
 app.use("/api/zaloPay", zaloPayRouter);
 app.use("/api/momo", momoRouter);
 
