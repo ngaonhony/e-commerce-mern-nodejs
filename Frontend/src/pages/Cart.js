@@ -62,10 +62,10 @@ const Cart = () => {
       <BreadCrumb title="Cart" />
       <Container class1="cart-wrapper home-wrapper-2 py-5">
         <div className="w-full bg-white overflow-y-auto overflow-x-hidden">
-          <div className="flex md:flex-row flex-col justify">
-            <div className="lg:w-3/5 w-full md:pl-10 pl-4 pr-10 md:pr-4">
-              {userCartState &&
-                userCartState.map((item, index) => (
+          {userCartState && userCartState.length > 0 ? (
+            <div className="flex md:flex-row flex-col justify">
+              <div className="lg:w-3/5 w-full md:pl-10 pl-4 pr-10 md:pr-4">
+                {userCartState.map((item, index) => (
                   <div
                     key={index}
                     className="md:flex items-center mt-14 py-8 "
@@ -138,27 +138,35 @@ const Cart = () => {
                     </div>
                   </div>
                 ))}
-            </div>
-            <div className="lg:w-2/5 w-full bg-gray-50 px-14 py-20">
-              <p className="text-4xl font-black leading-9 text-gray-800">
-                Summary
-              </p>
-              <div className="flex items-center justify-between pt-16">
-                <p className="text-base leading-none text-gray-800">Subtotal</p>
-                <p className="text-base leading-none text-gray-800">
-                  Rs. {totalAmount ?? 0}
+              </div>
+              <div className="lg:w-2/5 w-full bg-gray-50 px-14 py-20">
+                <p className="text-4xl font-black leading-9 text-gray-800">
+                  Summary
                 </p>
-              </div>
-              <p className="text-xs leading-3 text-gray-600 pt-4">
-                Taxes and shipping calculated at checkout
-              </p>
-              <div className="pt-10 justify-items-end">
-                <Link to="/checkout" className="button w-full text-center">
-                  Checkout
-                </Link>
+                <div className="flex items-center justify-between pt-16">
+                  <p className="text-base leading-none text-gray-800">Subtotal</p>
+                  <p className="text-base leading-none text-gray-800">
+                    Rs. {totalAmount ?? 0}
+                  </p>
+                </div>
+                <p className="text-xs leading-3 text-gray-600 pt-4">
+                  Taxes and shipping calculated at checkout
+                </p>
+                <div className="pt-10 justify-items-end">
+                  <Link to="/checkout" className="button w-full text-center">
+                    Checkout
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-20">
+              <p className="text-2xl font-bold text-gray-800">Your cart is empty</p>
+              <Link to="/store" className="button mt-5">
+                Back to Store
+              </Link>
+            </div>
+          )}
         </div>
       </Container>
     </>

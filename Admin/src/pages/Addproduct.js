@@ -84,11 +84,9 @@ const Addproduct = () => {
 
   useEffect(() => {
     if (isSuccess && createdProduct) {
-      toast.success("Product Added Successfully!");
       navigate("/admin/list-product");
     }
     if (isSuccess && updatedProduct) {
-      toast.success("Product Updated Successfully!");
       navigate("/admin/list-product");
     }
     if (isError) {
