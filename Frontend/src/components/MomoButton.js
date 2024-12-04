@@ -33,7 +33,7 @@ const MoMoPaymentButton = ({ amount }) => {
   return (
     <button onClick={handleMoMoPayment} className="button w-full bg-gray-500 hover:bg-gray-600 text-center !rounded-none text-white py-2 flex items-center justify-center">
     <img src={MoMoLogo} alt="MoMo Logo" className="mr-2" />
-      Thanh Toán MoMo {amount ? amount + 0 : "0"}
+      MoMo {amount ? amount + 0 : "0"}
     </button>
   );
 };

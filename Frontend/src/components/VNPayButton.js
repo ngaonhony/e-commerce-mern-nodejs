@@ -28,7 +28,7 @@ const VNPayButton = ({ amount }) => {
       src={VNPayLogo} 
       alt="VNPay Logo" 
       className="mr-2"/>
-      {amount ? amount.toLocaleString() : "0"}
+      VNPay {amount ? amount.toLocaleString() : "0"}
     </button>
   );
 };

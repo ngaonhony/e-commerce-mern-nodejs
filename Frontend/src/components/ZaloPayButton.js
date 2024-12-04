@@ -29,7 +29,7 @@ const ZaloPayButton = ({ amount }) => {
      src={ZaloPay} 
      alt="VNPay Logo" 
      className="mr-2" />
-      Thanh Toán ZaloPay {amount ? amount + 0 : "0"}
+       ZaloPay {amount ? amount + 0 : "0"}
     </button>
   );
 };
