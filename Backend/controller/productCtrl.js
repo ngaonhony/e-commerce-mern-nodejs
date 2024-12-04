@@ -45,11 +45,15 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 const getaProduct = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  validateMongoDbId(id);
   try {
-    const findProduct = await Product.findById(id).populate("color");
-    res.json(findProduct);
+    const { id } = req.params;
+
+    const product = await Product.findById(id)
+      .populate('ratings.postedby', 'firstname') 
+      .populate('color') 
+      .exec();
+
+    res.json(product);
   } catch (error) {
     throw new Error(error);
   }

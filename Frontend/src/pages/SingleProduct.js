@@ -16,6 +16,7 @@ import {
 import { toast } from "react-toastify";
 import { addProdToCart, getUserCart } from "../features/user/userSlice";
 import Color from "../components/Color";
+import { ReactComponent as UserIcon } from "../images/user.svg";
 
 const SingleProduct = () => {
   const [color, setColor] = useState(null);
@@ -372,25 +373,7 @@ const SingleProduct = () => {
                           onClick={() => toggleReview(index)}
                           className="ml-4 md:hidden"
                         >
-                          <svg
-                            className={
-                              "transform " +
-                              (expandedReviews[index] ? "rotate-180" : "rotate-0")
-                            }
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M15 12.5L10 7.5L5 12.5"
-                              stroke="#1F2937"
-                              strokeWidth="1.25"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                          {/* SVG Icon */}
                         </button>
                       </div>
                       <div className="cursor-pointer mt-2 md:mt-0">
@@ -405,8 +388,7 @@ const SingleProduct = () => {
                     </div>
                     <div
                       className={
-                        "md:block " +
-                        (expandedReviews[index] ? "block" : "hidden")
+                        "md:block " + (expandedReviews[index] ? "block" : "hidden")
                       }
                     >
                       <p className="mt-3 text-base leading-normal text-gray-600 w-full md:w-9/12 xl:w-5/6">
@@ -414,19 +396,29 @@ const SingleProduct = () => {
                       </p>
                       {/* Reviewer Info */}
                       <div className="mt-6 flex justify-start items-center flex-row space-x-2.5">
+                        {/* Removed the user's avatar image */}
                         <div>
-                          <img
-                            src={item?.postedby?.avatar || "default-avatar.png"}
-                            alt="user-avatar"
-                            className="w-10 h-10 rounded-full"
-                          />
+                          {item?.postedby?.avatar ? (
+                            <img
+                              src={item.postedby.avatar}
+                              alt="user-avatar"
+                              className="w-10 h-10 rounded-full"
+                            />
+                          ) : (
+                            <UserIcon
+                              fill="black"
+                              width={40}
+                              height={40}
+                              className="w-10 h-10 rounded-s-lg"
+                            />
+                          )}
                         </div>
                         <div className="flex flex-col justify-start items-start space-y-2">
                           <p className="text-base font-medium leading-none text-gray-800">
                             {item?.postedby?.firstname || "User"}
                           </p>
                           <p className="text-sm leading-none text-gray-600">
-                            {new Date(item?.updatedAt).toLocaleDateString()}
+                            {new Date(productState?.updatedAt).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
