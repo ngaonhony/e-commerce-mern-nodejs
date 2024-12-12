@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import React, { useEffect } from "react";
+import React, { useEffect, } from "react";
 import { useDispatch, } from "react-redux";
 import { getAllProducts } from "../features/products/productSlice";
 import Banner1 from "../banners/Banner1";
@@ -13,7 +13,7 @@ const Home = () => {
     dispatch(getAllProducts());
   }, [dispatch]);
 
-
+  
   return (
     <>
       <Banner1 />

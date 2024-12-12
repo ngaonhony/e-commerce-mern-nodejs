@@ -47,7 +47,8 @@ export default function Nav() {
   useEffect(() => {
     dispatch(getUserCart(config2));
   }, [dispatch]);
-
+  const state = useSelector((state) => state);
+  console.log(state)
   const [productOpt, setProductOpt] = useState([]);
   useEffect(() => {
     let sum = 0;
