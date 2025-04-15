@@ -7,7 +7,7 @@ const uniqid = require("uniqid");
 
 const asyncHandler = require("express-async-handler");
 const { generateToken } = require("../config/jwtToken");
-const validateMongoDbId = require("../utils/validateMongodbId");
+const validateMongoDbId = require("../utils/validateMongoDbId");
 const { generateRefreshToken } = require("../config/refreshtoken");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
